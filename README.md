@@ -74,9 +74,11 @@ As versões foram verificadas no registro de crates em 14 de agosto de 2026. Ser
 
 O parser aceita prefixo configurável e os comandos `play`, `pause`, `resume`, `stop`, `skip`, `previous`, `shuffle`, `queue`, `nowplaying`, `volume`, `mute`, `repeat off|track|queue`, `remove`, `clear` e `help`. A camada de sessão fornece a base para slash commands equivalentes e autocomplete no adaptador Discord.
 
-## Compilação e testes
+## Compilação e manual de execução
 
-Instale Rust estável atual, FFmpeg e, para voz, bibliotecas Opus do sistema. Depois execute:
+Instale Rust estável atual, FFmpeg, `yt-dlp` e, para voz, bibliotecas Opus do sistema. O `yt-dlp` precisa estar no `PATH`, pois o Songbird o executa como processo externo para resolver buscas e URLs.
+
+Execute:
 
 ```bash
 cargo test
@@ -84,10 +86,11 @@ cargo run -- --self-check
 cargo run
 ```
 
-O comando `--self-check` não exige token. Para execução conectada, crie `.env`:
+Na execução normal, o programa solicita o token do bot com entrada oculta no terminal. O token não é salvo em `.env`, arquivo JSON ou log. Depois da validação, o cliente conecta ao Discord e permanece ativo até você pressionar `Ctrl+C`; esse sinal encerra os shards e retorna ao terminal de forma graciosa.
+
+As opções operacionais podem ser colocadas em `.env`, sem o token:
 
 ```dotenv
-DISCORD_TOKEN=seu_token
 COMMAND_PREFIX=!
 DEFAULT_VOLUME=75
 MAX_QUEUE_SIZE=100
@@ -95,7 +98,23 @@ LEAVE_ON_EMPTY_SECS=300
 DATABASE_PATH=musay.json
 ```
 
-O bot precisa das permissões Discord correspondentes a ver canais, enviar mensagens, conectar e falar em canais de voz. A feature de transporte deve ser finalizada/ativada no ambiente de implantação com a configuração do gateway, intents mínimos e registro de comandos.
+No [Discord Developer Portal](https://discord.com/developers/applications), habilite o **Message Content Intent** para a aplicação e convide o bot ao servidor com permissões para ver canais, ler histórico, enviar mensagens, conectar e falar em canais de voz. O usuário precisa estar em um canal de voz para usar `!play`.
+
+### Comandos disponíveis
+
+| Comando | Função |
+|---|---|
+| `!play <busca ou URL>` | Resolve com yt-dlp, entra no canal de voz do usuário e começa a reprodução |
+| `!pause` / `!resume` | Pausa ou retoma a faixa ativa |
+| `!stop` / `!skip` | Para a faixa atual; outra pode ser iniciada com `!play` |
+| `!queue` / `!nowplaying` | Exibe a fila interna ou a faixa atual |
+| `!shuffle` | Embaralha a fila interna |
+| `!volume <0-100>` / `!mute` | Ajusta ou silencia a faixa ativa |
+| `!repeat off\|track\|queue` | Define o modo de repetição do player interno |
+| `!remove <índice>` / `!clear` | Remove uma faixa ou limpa a fila interna |
+| `!previous` / `!help` | Recupera histórico quando disponível ou mostra a ajuda |
+
+O bot usa comandos prefixados, não slash commands. O prefixo padrão é `!` e pode ser alterado por `COMMAND_PREFIX`.
 
 ## Auditoria e CI
 
@@ -107,13 +126,13 @@ Os repositórios analisados permanecem apenas como referências externas. O cód
 
 ## Limitações conhecidas
 
-A versão atual implementa o núcleo funcional e uma API neutra de comandos, mas ainda não conecta o gateway Serenity nem instancia o handler Songbird em `main.rs`. O `BasicResolver` valida entradas e cria metadados, porém não executa yt-dlp. A persistência inicial é JSON, adequada para uma instalação simples, mas não substitui uma base SQLite em cenários de alta concorrência. Também faltam dashboard web, letras sincronizadas, Spotify OAuth, métricas Prometheus e integração de componentes Discord.
+A versão atual já conecta o gateway Serenity, registra o Songbird, solicita o token no terminal, entra em canais de voz e usa `YoutubeDl` para resolver buscas/URLs. A fila interna e os estados do player estão separados do transporte; a reprodução real substitui a faixa ativa quando um novo `!play` é executado. Ainda faltam avanço automático da fila no evento de término, dashboard web, letras sincronizadas, Spotify OAuth, métricas Prometheus e comandos slash.
 
-Essas limitações são intencionais e explícitas: o núcleo está compilável e testado; o próximo incremento deve implementar o adapter de transporte e o resolver de produção, sem alterar `Player`, `TrackQueue` ou a API `AudioSource`.
+Essas limitações são intencionais e explícitas: o caminho principal de conexão e reprodução está implementado e compilado, mas o ambiente precisa ter `yt-dlp`, FFmpeg e as permissões/intents corretos. O próximo incremento deve conectar o evento de término ao avanço automático de `TrackQueue`, sem alterar `Player`, `TrackQueue` ou a API `AudioSource`.
 
 ## Melhorias futuras
 
-A próxima etapa recomendada é adicionar `DiscordAdapter` com Serenity/Songbird, uma cadeia `YtDlpResolver`/`DirectUrlResolver`/`LocalFileResolver`, worker de FFmpeg com timeout e cancelamento, SQLite via SQLx, comandos slash registrados por guild, embeds e botões, reconexão com backoff, métricas e testes de integração com fakes de voice. A arquitetura atual foi desenhada para essas extensões sem reescrever o player.
+A próxima etapa recomendada é conectar o evento de término do Songbird ao avanço automático da fila, adicionar uma cadeia de resolvers com timeouts e cancelamento, persistência SQLite via SQLx, comandos slash registrados por guild, embeds e botões, reconexão com backoff, métricas e testes de integração com fakes de voice. A arquitetura atual foi desenhada para essas extensões sem reescrever o player.
 
 ## Referências
 

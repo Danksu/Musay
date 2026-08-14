@@ -2,7 +2,7 @@
 
 ## Escopo e método
 
-A auditoria foi conduzida sobre o repositório Rust atual do Musay, seguindo os fluxos executáveis e os artefatos de build, sem inferir a existência de frontend, API HTTP, banco SQL ou gateway Discord funcional onde eles não existem. Foram executados `cargo test --all-targets`, `cargo check --all-targets`, `cargo fmt --all` e inspeções estáticas dos módulos, manifesto, lockfile, Dockerfile e configuração. O componente Clippy não estava instalado no ambiente inicial; por isso, a ausência de resultado local de Clippy não é tratada como evidência de qualidade nem de segurança.
+A auditoria foi conduzida sobre o repositório Rust atual do Musay, seguindo os fluxos executáveis e os artefatos de build, sem inferir capacidades externas não verificadas. Após a auditoria inicial, foi implementado um runtime real de gateway Discord/voz, que foi compilado e testado estaticamente; a conexão contra uma conta Discord real não foi executada neste ambiente. Foram executados `cargo test --all-targets`, `cargo check --all-targets`, `cargo fmt --all` e inspeções estáticas dos módulos, manifesto, lockfile, Dockerfile e configuração. O componente Clippy não estava instalado no ambiente inicial; por isso, a ausência de resultado local de Clippy não é tratada como evidência de qualidade nem de segurança.
 
 ## Status verificado
 
@@ -14,7 +14,7 @@ A auditoria foi conduzida sobre o repositório Rust atual do Musay, seguindo os 
 | Clippy | `cargo clippy --all-targets -- -D warnings` executado sem erros | Confirmado |
 | Advisories | `cargo-audit` não instalado no ambiente | Não verificado |
 | Credenciais versionadas | Nenhuma encontrada na inspeção do repositório | Confirmado para o snapshot auditado |
-| Features opcionais | `cargo check --all-features` executado sem erros | Confirmado; adapter ainda não conectado no `main.rs` |
+| Runtime Discord | `cargo check` e `cargo test --all-targets` executados após a integração Serenity/Songbird | Confirmado em compilação; conexão real depende de token, intents e ambiente externo |
 
 ## Correções aplicadas no primeiro conjunto
 
@@ -24,10 +24,10 @@ A configuração passou a validar prefixo, volume, tamanho máximo da fila, time
 
 ## Riscos residuais
 
-A proteção contra SSRF é uma mitigação de entrada, não uma garantia completa contra DNS rebinding ou redirecionamentos perigosos; um resolver que faça download real deve resolver DNS, aplicar política de rede no cliente HTTP, limitar redirects e executar em sandbox. A persistência JSON ainda depende de permissões corretas do diretório e não oferece lock entre processos. O player central está testado, mas o transporte real de áudio Discord e a execução de yt-dlp/FFmpeg ainda não estão conectados.
+A proteção contra SSRF é uma mitigação de entrada, não uma garantia completa contra DNS rebinding ou redirecionamentos perigosos; o resolver de produção deve manter política de rede no cliente HTTP, limitar redirects e executar em sandbox quando necessário. A persistência JSON ainda depende de permissões corretas do diretório e não oferece lock entre processos. O runtime Discord/Songbird está compilado, mas a conexão real, permissões do servidor, existência de `yt-dlp`/FFmpeg e reprodução contra uma fonte externa não foram exercitadas neste ambiente.
 
 Não foi possível concluir uma auditoria de advisories sem `cargo-audit`. O workflow adiciona formatação, check, testes e Clippy, mas a verificação de vulnerabilidades de dependências deve ser executada separadamente em CI quando o time escolher e fixar a ferramenta de advisories.
 
 ## Próximas ações prioritárias
 
-A próxima grande entrega deve implementar o adapter Serenity/Songbird e o resolver de produção com timeouts, cancelamento, backoff limitado, allowlist de fontes, sandbox de FFmpeg e observabilidade de falhas. Depois disso, devem ser adicionados testes de integração com fakes de voice, teste de restart/persistência e uma etapa de advisory scan no pipeline.
+A próxima grande entrega deve conectar o evento de término do Songbird ao avanço automático da fila, adicionar timeouts/cancelamento/backoff limitado, sandbox de FFmpeg e observabilidade de falhas. Depois disso, devem ser adicionados testes de integração com fakes de voice, teste de restart/persistência e uma etapa de advisory scan no pipeline.

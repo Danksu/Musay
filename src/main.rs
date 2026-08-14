@@ -1,5 +1,4 @@
 use musay::config::Config;
-use musay::discord::{parse_command, CommandService};
 use tracing::info;
 
 #[tokio::main]
@@ -8,7 +7,8 @@ async fn main() {
     tracing_subscriber::fmt()
         .with_env_filter("musay=info")
         .init();
-    if std::env::args().any(|a| a == "--self-check") {
+
+    if std::env::args().any(|arg| arg == "--self-check") {
         match Config::for_self_check() {
             Ok(_) => println!("Musay core OK"),
             Err(error) => {
@@ -18,21 +18,34 @@ async fn main() {
         }
         return;
     }
-    let config = match Config::from_env() {
-        Ok(c) => c,
-        Err(e) => {
-            eprintln!(
-                "Configuração inválida: {e}. Use --self-check para validar o núcleo sem token."
-            );
-            std::process::exit(2);
+
+    #[cfg(feature = "discord")]
+    {
+        let token = match rpassword::prompt_password("Token do bot Discord (entrada oculta): ") {
+            Ok(token) => token,
+            Err(error) => {
+                eprintln!("não foi possível ler o token: {error}");
+                std::process::exit(2);
+            }
+        };
+        let config = match Config::from_token(token) {
+            Ok(config) => config,
+            Err(error) => {
+                eprintln!("token/configuração inválida: {error}");
+                std::process::exit(2);
+            }
+        };
+        info!("iniciando conexão com o Discord; pressione Ctrl+C para encerrar");
+        if let Err(error) = musay::discord::runtime::BotRuntime::new(config).run().await {
+            eprintln!("o bot encerrou com erro: {error}");
+            std::process::exit(1);
         }
-    };
-    let service = CommandService::new(config);
-    info!("Musay iniciado; o adaptador Discord deve ser habilitado com a feature `discord` em uma implantação com token");
-    let _ = parse_command("!help", "!");
-    if let Err(e) = tokio::signal::ctrl_c().await {
-        eprintln!("Falha ao aguardar shutdown: {e}");
+        info!("bot encerrado de forma graciosa");
     }
-    info!("shutdown gracioso concluído");
-    drop(service);
+
+    #[cfg(not(feature = "discord"))]
+    {
+        eprintln!("esta build foi compilada sem a feature `discord`; execute `cargo run` com as features padrão");
+        std::process::exit(2);
+    }
 }

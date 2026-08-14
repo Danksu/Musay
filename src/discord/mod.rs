@@ -1,3 +1,6 @@
+#[cfg(feature = "discord")]
+pub mod runtime;
+
 use crate::{
     audio::{AudioSource, BasicResolver, RepeatMode},
     config::Config,

@@ -41,6 +41,13 @@ impl Config {
         Self::from_values("self-check-token".to_owned())
     }
 
+    pub fn from_token(token: String) -> Result<Self, ConfigError> {
+        if token.trim().is_empty() {
+            return Err(ConfigError::MissingToken);
+        }
+        Self::from_values(token)
+    }
+
     fn from_values(token: String) -> Result<Self, ConfigError> {
         let command_prefix = env::var("COMMAND_PREFIX").unwrap_or_else(|_| "!".into());
         if command_prefix.is_empty() || command_prefix.len() > MAX_PREFIX_BYTES {
