@@ -116,6 +116,10 @@ No [Discord Developer Portal](https://discord.com/developers/applications), habi
 
 O bot usa comandos prefixados, não slash commands. O prefixo padrão é `!` e pode ser alterado por `COMMAND_PREFIX`.
 
+## Distribuição local
+
+O fluxo de distribuição é local e plug and play: o usuário recebe o executável e os binários auxiliares, executa o programa, informa o token ocultamente e encerra com `Ctrl+C`. **Docker não é necessário para executar o bot distribuído.** Consulte [`DISTRIBUTION.md`](DISTRIBUTION.md) para empacotamento Linux/macOS/Windows, requisitos do Discord Developer Portal e instruções de duplo clique.
+
 ## Auditoria e CI
 
 O relatório técnico com achados confirmados, prioridades, correções, riscos residuais e evidências está em [`AUDIT_REPORT.md`](AUDIT_REPORT.md), enquanto o inventário priorizado do baseline está em [`audit_findings.md`](audit_findings.md). O workflow [`CI`](.github/workflows/ci.yml) verifica formatação, compilação, testes e Clippy em cada push e pull request. A auditoria de advisories de dependências ainda depende da instalação de uma ferramenta específica, portanto não é declarada como concluída.

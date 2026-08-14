@@ -28,6 +28,10 @@ A proteção contra SSRF é uma mitigação de entrada, não uma garantia comple
 
 Não foi possível concluir uma auditoria de advisories sem `cargo-audit`. O workflow adiciona formatação, check, testes e Clippy, mas a verificação de vulnerabilidades de dependências deve ser executada separadamente em CI quando o time escolher e fixar a ferramenta de advisories.
 
+## Distribuição e operação
+
+O fluxo final de operação é local: o executável pede o token interativamente, procura `yt-dlp` ao lado do binário ou no `PATH`, avisa sobre FFmpeg ausente e conecta ao Discord. O Dockerfile foi removido do projeto para não sugerir container como requisito do usuário final. Os scripts `scripts/package-local.sh` e `scripts/package-local.ps1` geram pastas distribuíveis por plataforma.
+
 ## Próximas ações prioritárias
 
 A próxima grande entrega deve conectar o evento de término do Songbird ao avanço automático da fila, adicionar timeouts/cancelamento/backoff limitado, sandbox de FFmpeg e observabilidade de falhas. Depois disso, devem ser adicionados testes de integração com fakes de voice, teste de restart/persistência e uma etapa de advisory scan no pipeline.

@@ -6,7 +6,10 @@ use songbird::input::YoutubeDl;
 use songbird::tracks::TrackHandle;
 use songbird::SerenityInit;
 use std::collections::HashMap;
+use std::env;
+use std::path::Path;
 use std::sync::Arc;
+use tokio::process::Command as ProcessCommand;
 use tokio::sync::Mutex;
 use tracing::{info, warn};
 
@@ -27,6 +30,7 @@ impl BotRuntime {
     }
 
     pub async fn run(self) -> Result<(), String> {
+        self.ensure_local_tools().await?;
         let intents = GatewayIntents::GUILDS
             | GatewayIntents::GUILD_MESSAGES
             | GatewayIntents::MESSAGE_CONTENT
@@ -49,6 +53,56 @@ impl BotRuntime {
                 Ok(())
             }
         }
+    }
+
+    async fn ensure_local_tools(&self) -> Result<(), String> {
+        let executable_dir = env::current_exe()
+            .ok()
+            .and_then(|path| path.parent().map(Path::to_path_buf));
+        if let Some(dir) = executable_dir {
+            let candidate = if cfg!(windows) {
+                dir.join("yt-dlp.exe")
+            } else {
+                dir.join("yt-dlp")
+            };
+            if candidate.is_file() {
+                let current_path = env::var_os("PATH").unwrap_or_default();
+                let mut paths = vec![dir];
+                paths.extend(env::split_paths(&current_path));
+                let joined = env::join_paths(paths)
+                    .map_err(|error| format!("PATH local inválido: {error}"))?;
+                env::set_var("PATH", joined);
+            }
+        }
+        let output = ProcessCommand::new(if cfg!(windows) {
+            "yt-dlp.exe"
+        } else {
+            "yt-dlp"
+        })
+        .arg("--version")
+        .output()
+        .await
+        .map_err(|_| {
+            "yt-dlp não foi encontrado. Coloque yt-dlp/yt-dlp.exe ao lado do executável ou no PATH"
+                .to_owned()
+        })?;
+        if !output.status.success() {
+            return Err("yt-dlp foi encontrado, mas não conseguiu executar --version".to_owned());
+        }
+        info!(version = %String::from_utf8_lossy(&output.stdout).trim(), "yt-dlp disponível");
+        if ProcessCommand::new(if cfg!(windows) {
+            "ffmpeg.exe"
+        } else {
+            "ffmpeg"
+        })
+        .arg("-version")
+        .output()
+        .await
+        .is_err()
+        {
+            warn!("FFmpeg não foi encontrado; algumas fontes e formatos podem não reproduzir");
+        }
+        Ok(())
     }
 
     async fn voice_channel_for(

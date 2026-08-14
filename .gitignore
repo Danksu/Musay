@@ -3,3 +3,4 @@
 *.log
 musay.json
 musay.json.tmp
+dist/
