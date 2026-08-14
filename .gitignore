@@ -1,0 +1,5 @@
+/target
+.env
+*.log
+musay.json
+musay.json.tmp

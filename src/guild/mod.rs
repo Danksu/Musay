@@ -1,0 +1,54 @@
+use crate::audio::{Player, RepeatMode, Track};
+use crate::config::Config;
+use std::collections::HashMap;
+use std::sync::Arc;
+use tokio::sync::RwLock;
+
+#[derive(Debug, Clone)]
+pub struct GuildSession {
+    pub guild_id: u64,
+    pub voice_channel_id: Option<u64>,
+    pub text_channel_id: Option<u64>,
+    pub player: Player,
+}
+impl GuildSession {
+    pub fn new(guild_id: u64, config: &Config) -> Self {
+        Self {
+            guild_id,
+            voice_channel_id: None,
+            text_channel_id: None,
+            player: Player::new(config.max_queue_size, config.default_volume),
+        }
+    }
+    pub fn enqueue(&mut self, track: Track) -> Result<bool, crate::audio::QueueError> {
+        self.player.enqueue(track)
+    }
+    pub fn set_repeat(&mut self, mode: RepeatMode) {
+        self.player.set_repeat(mode);
+    }
+}
+
+#[derive(Clone, Default)]
+pub struct SessionRegistry {
+    sessions: Arc<RwLock<HashMap<u64, GuildSession>>>,
+}
+impl SessionRegistry {
+    pub async fn get_or_create(&self, guild_id: u64, config: &Config) -> GuildSession {
+        let mut lock = self.sessions.write().await;
+        lock.entry(guild_id)
+            .or_insert_with(|| GuildSession::new(guild_id, config))
+            .clone()
+    }
+    pub async fn replace(&self, session: GuildSession) {
+        self.sessions
+            .write()
+            .await
+            .insert(session.guild_id, session);
+    }
+    pub async fn remove(&self, guild_id: u64) -> Option<GuildSession> {
+        self.sessions.write().await.remove(&guild_id)
+    }
+    pub async fn len(&self) -> usize {
+        self.sessions.read().await.len()
+    }
+}

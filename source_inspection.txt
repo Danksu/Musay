@@ -1,0 +1,1360 @@
+=== NODE manifest ===
+{
+    "name": "music-bot",
+    "main": "main.js",
+    "author": "ZerioDev",
+    "version": "8.0.0",
+    "repository": "https://github.com/ZerioDev/Music-bot.git",
+    "description": "A complete code to download for a cool Discord music bot.",
+    "scripts": {
+        "start": "node main.js"
+    },
+    "dependencies": {
+        "@discord-player/extractor": "^4.3.1",
+        "@discordjs/opus": "^0.9.0",
+        "@distube/ytdl-core": "^4.11.8",
+        "@evan/opus": "^1.0.3",
+        "discord-player": "6.6.9-dev.1",
+        "discord-player-youtubei": "^1.3.3",
+        "discord.js": "^14.13.0",
+        "dotenv": "^16.4.5",
+        "ffmpeg-static": "^5.0.2",
+        "ms": "^3.0.0-canary.1",
+        "play-dl": "^1.9.6",
+        "translate": "^3.0.0"
+    }
+}
+=== NODE command/button/event files ===
+Discord/interactionCreate.js
+Discord/ready.js
+Player/audioTrackAdd.js
+Player/audioTracksAdd.js
+Player/disconnect.js
+Player/emptyChannel.js
+Player/emptyQueue.js
+Player/error.js
+Player/playerError.js
+Player/playerFinish.js
+Player/playerSkip.js
+Player/playerStart.js
+back.js
+core/help.js
+core/ping.js
+loop.js
+lyrics.js
+music/SkipTo.js
+music/back.js
+music/clear.js
+music/controller.js
+music/filter.js
+music/history.js
+music/jump.js
+music/loop.js
+music/lyrics.js
+music/nowplaying.js
+music/pause.js
+music/play.js
+music/playnext.js
+music/queue.js
+music/remove.js
+music/resume.js
+music/save.js
+music/search.js
+music/seek.js
+music/shuffle.js
+music/skip.js
+music/stop.js
+music/syncedlyrics.js
+music/volume.js
+nowplaying.js
+queue.js
+resume&pause.js
+savetrack.js
+shuffle.js
+skip.js
+stop.js
+volumedown.js
+volumeup.js
+=== NODE feature symbols ===
+ref_repos/Music-bot-Node/buttons/volumeup.js:5:module.exports = async ({ inter, queue }) => {
+ref_repos/Music-bot-Node/buttons/volumeup.js:6:    if (!queue?.isPlaying()) return inter.editReply({ content: await Translate(`No music currently playing... try again ? <❌>`) });
+ref_repos/Music-bot-Node/buttons/volumeup.js:8:    const vol = Math.floor(queue.node.volume + 5)
+ref_repos/Music-bot-Node/buttons/volumeup.js:9:    if (vol > maxVol) return inter.editReply({ content: await Translate(`I can not move the volume up any more <${inter.member}>... try again ? <❌>`) });
+ref_repos/Music-bot-Node/buttons/volumeup.js:10:    if (queue.node.volume === vol) return inter.editReply({ content: await Translate(`The volume you want to change is already the current one <${inter.member}>... try again ? <❌>`) });
+ref_repos/Music-bot-Node/buttons/volumeup.js:12:    const success = queue.node.setVolume(vol);
+ref_repos/Music-bot-Node/buttons/volumeup.js:14:    return inter.editReply({ content: success ? await Translate(`The volume has been modified to <${vol}/${maxVol}% 🔊>`) : await Translate(`Something went wrong <${inter.member}>... try again ? <❌>`) });
+ref_repos/Music-bot-Node/config.js:8:        loopMessage: false,
+ref_repos/Music-bot-Node/config.js:15:        'skip': '⏩',
+ref_repos/Music-bot-Node/config.js:18:        'volumeUp': '🔊',
+ref_repos/Music-bot-Node/config.js:19:        'volumeDown': '🔉',
+ref_repos/Music-bot-Node/config.js:20:        'loop': '🔁',
+ref_repos/Music-bot-Node/config.js:31:        spotifyBridge: true,
+ref_repos/Music-bot-Node/config.js:32:        volume: 75,
+ref_repos/Music-bot-Node/config.js:33:        leaveOnEmpty: true,
+ref_repos/Music-bot-Node/config.js:34:        leaveOnEmptyCooldown: 30000,
+ref_repos/Music-bot-Node/config.js:35:        leaveOnEnd: true,
+ref_repos/Music-bot-Node/config.js:36:        leaveOnEndCooldown: 30000,
+ref_repos/Music-bot-Node/package.json:12:        "@discord-player/extractor": "^4.3.1",
+ref_repos/Music-bot-Node/package.json:16:        "discord-player": "6.6.9-dev.1",
+ref_repos/Music-bot-Node/package.json:17:        "discord-player-youtubei": "^1.3.3",
+ref_repos/Music-bot-Node/package.json:20:        "ffmpeg-static": "^5.0.2",
+ref_repos/Music-bot-Node/main.js:3:const { Player } = require('discord-player');
+ref_repos/Music-bot-Node/main.js:5:const { YoutubeiExtractor } = require('discord-player-youtubei'); // Import the new extractor
+ref_repos/Music-bot-Node/main.js:20:const player = new Player(client, client.config.opt.discordPlayer);
+ref_repos/Music-bot-Node/main.js:22:player.extractors.register(YoutubeiExtractor, {});
+ref_repos/Music-bot-Node/buttons/volumedown.js:5:module.exports = async ({ inter, queue }) => {
+ref_repos/Music-bot-Node/buttons/volumedown.js:6:    if (!queue?.isPlaying()) return inter.editReply({ content: await Translate(`No music currently playing... try again ? <❌>`) });
+ref_repos/Music-bot-Node/buttons/volumedown.js:8:    const vol = Math.floor(queue.node.volume - 5);
+ref_repos/Music-bot-Node/buttons/volumedown.js:9:    if (vol < 0) return inter.editReply({ content: await Translate(`I can not move the volume down any more <${inter.member}>... try again ? <❌>`) });
+ref_repos/Music-bot-Node/buttons/volumedown.js:10:    if (queue.node.volume === vol) return inter.editReply({ content: await Translate(`The volume you want to change is already the current one <${inter.member}>... try again ? <❌>`) });
+ref_repos/Music-bot-Node/buttons/volumedown.js:12:    const success = queue.node.setVolume(vol);
+ref_repos/Music-bot-Node/buttons/volumedown.js:13:    return inter.editReply({ content: success ? await Translate(`The volume has been modified to <${vol}/${maxVol}% 🔊>`) : await Translate(`Something went wrong <${inter.member}>... try again ? <❌>`) });
+ref_repos/Music-bot-Node/loader.js:3:const { useMainPlayer } = require("discord-player");
+ref_repos/Music-bot-Node/loader.js:6:const player = useMainPlayer();
+ref_repos/Music-bot-Node/loader.js:13:const playerEvents = readdirSync("./events/Player/").filter((file) =>
+ref_repos/Music-bot-Node/loader.js:28:  for (const file of playerEvents) {
+ref_repos/Music-bot-Node/loader.js:32:    player.events.on(file.split(".")[0], PlayerEvent.bind(null));
+ref_repos/Music-bot-Node/buttons/stop.js:4:module.exports = async ({ inter, queue }) => {
+ref_repos/Music-bot-Node/buttons/stop.js:5:    if (!queue?.isPlaying()) return inter.editReply({ content: await Translate(`No music currently playing... try again ? <❌>`) });
+ref_repos/Music-bot-Node/buttons/stop.js:7:    queue.delete();
+ref_repos/Music-bot-Node/buttons/skip.js:3:module.exports = async ({ inter, queue }) => {
+ref_repos/Music-bot-Node/buttons/skip.js:4:    if (!queue?.isPlaying()) return inter.editReply({ content: await Translate(`No music currently playing... try again ? <❌>`) });
+ref_repos/Music-bot-Node/buttons/skip.js:6:    const success = queue.node.skip();
+ref_repos/Music-bot-Node/buttons/skip.js:8:    return inter.editReply({ content: success ? await Translate(`Current music <${queue.currentTrack.title}> skipped <✅>`) : await Translate(`Something went wrong <${inter.member}>... try again ? <❌>`) });
+ref_repos/Music-bot-Node/buttons/shuffle.js:4:module.exports = async ({ inter, queue }) => {
+ref_repos/Music-bot-Node/buttons/shuffle.js:5:    if (!queue?.isPlaying()) return inter.editReply({ content: await Translate(`No music currently playing... try again ? <❌>`) });
+ref_repos/Music-bot-Node/buttons/shuffle.js:6:    if (!queue.tracks.toArray()[0]) return inter.editReply({ content: await Translate(`No music in the queue after the current one <${inter.member}>... try again ? <❌>`) });
+ref_repos/Music-bot-Node/buttons/shuffle.js:8:    await queue.tracks.shuffle();
+ref_repos/Music-bot-Node/buttons/shuffle.js:12:        .setAuthor({ name: await Translate(`Queue shuffled <${queue.tracks.size}> song(s)! <✅>`) });
+ref_repos/Music-bot-Node/buttons/savetrack.js:4:module.exports = async ({ inter, queue }) => {
+ref_repos/Music-bot-Node/buttons/savetrack.js:5:    if (!queue?.isPlaying()) return inter.editReply({ content: await Translate(`No music currently playing... try again ? <❌>`) });
+ref_repos/Music-bot-Node/buttons/savetrack.js:9:        .setTitle(`:arrow_forward: ${queue.currentTrack.title}`)
+ref_repos/Music-bot-Node/buttons/savetrack.js:10:        .setURL(queue.currentTrack.url)
+ref_repos/Music-bot-Node/buttons/savetrack.js:12:            { name: await Translate('Duration <:hourglass:>'), value: `\`${queue.currentTrack.duration}\``, inline: true },
+ref_repos/Music-bot-Node/buttons/savetrack.js:13:            { name: await Translate('Song by:'), value: `\`${queue.currentTrack.author}\``, inline: true },
+ref_repos/Music-bot-Node/buttons/savetrack.js:14:            { name: await Translate('Views <:eyes:>'), value: `\`${Number(queue.currentTrack.views).toLocaleString()}\``, inline: true },
+ref_repos/Music-bot-Node/buttons/savetrack.js:15:            { name: await Translate('Song <URL>:'), value: `\`${queue.currentTrack.url}\`` }
+ref_repos/Music-bot-Node/buttons/savetrack.js:17:        .setThumbnail(queue.currentTrack.thumbnail)
+ref_repos/Music-bot-Node/buttons/resume&pause.js:3:module.exports = async ({ inter, queue }) => {
+ref_repos/Music-bot-Node/buttons/resume&pause.js:4:    if (!queue?.isPlaying()) return inter.editReply({ content: await Translate(`No music currently playing... try again ? <❌>`) });
+ref_repos/Music-bot-Node/buttons/resume&pause.js:6:    const resumed = queue.node.resume();
+ref_repos/Music-bot-Node/buttons/resume&pause.js:7:    let message = await Translate(`Current music <${queue.currentTrack.title}> resumed <✅>`);
+ref_repos/Music-bot-Node/buttons/resume&pause.js:9:    if (!resumed) {
+ref_repos/Music-bot-Node/buttons/resume&pause.js:10:        queue.node.pause();
+ref_repos/Music-bot-Node/buttons/resume&pause.js:11:        message = await Translate(`Current music <${queue.currentTrack.title}> paused <✅>`);
+ref_repos/Music-bot-Node/events/Player/playerStart.js:4:module.exports = (queue, track) => {
+ref_repos/Music-bot-Node/events/Player/playerStart.js:5:  if (!client.config.app.loopMessage && queue.repeatMode !== 0) return;
+ref_repos/Music-bot-Node/events/Player/playerStart.js:18:          `Started playing <${track.title}> in <${queue.channel.name}> <🎧>`
+ref_repos/Music-bot-Node/events/Player/playerStart.js:29:    const skip = new ButtonBuilder()
+ref_repos/Music-bot-Node/events/Player/playerStart.js:30:      .setLabel(EmojiState ? emojis.skip : ('Skip'))
+ref_repos/Music-bot-Node/events/Player/playerStart.js:31:      .setCustomId('skip')
+ref_repos/Music-bot-Node/events/Player/playerStart.js:34:    const resumepause = new ButtonBuilder()
+ref_repos/Music-bot-Node/events/Player/playerStart.js:36:      .setCustomId('resume&pause')
+ref_repos/Music-bot-Node/events/Player/playerStart.js:39:    const loop = new ButtonBuilder()
+ref_repos/Music-bot-Node/events/Player/playerStart.js:40:      .setLabel(EmojiState ? emojis.loop : ('Loop'))
+ref_repos/Music-bot-Node/events/Player/playerStart.js:41:      .setCustomId('loop')
+ref_repos/Music-bot-Node/events/Player/playerStart.js:51:      loop,
+ref_repos/Music-bot-Node/events/Player/playerStart.js:52:      resumepause,
+ref_repos/Music-bot-Node/events/Player/playerStart.js:53:      skip,
+ref_repos/Music-bot-Node/events/Player/playerStart.js:56:    queue.metadata.channel.send({ embeds: [embed], components: [row1] });
+ref_repos/Music-bot-Node/buttons/queue.js:4:module.exports = async ({ client, inter, queue }) => {
+ref_repos/Music-bot-Node/buttons/queue.js:5:    if (!queue?.isPlaying()) return inter.editReply({ content: await Translate(`No music currently playing... try again ? <❌>`) });
+ref_repos/Music-bot-Node/buttons/queue.js:6:    if (!queue.tracks.toArray()[0]) return inter.editReply({ content: await Translate(`No music in the queue after the current one <${inter.member}>... try again ? <❌>`) });
+ref_repos/Music-bot-Node/buttons/queue.js:9:    const songs = queue.tracks.length;
+ref_repos/Music-bot-Node/buttons/queue.js:10:    const nextSongs = songs > 5 ? await Translate(`And <**${songs - 5}**> other song(s)...`) : await Translate(`In the playlist <**${songs}**> song(s)...`);
+ref_repos/Music-bot-Node/buttons/queue.js:11:    const tracks = queue.tracks.map(async (track, i) => await Translate(`<**${i + 1}**> - <${track.title} | ${track.author}> (requested by : <${track.requestedBy ? track.requestedBy.displayName : "unknown"}>)`));
+ref_repos/Music-bot-Node/buttons/queue.js:16:        .setAuthor({ name: await Translate(`Server queue - <${inter.guild.name} ${methods[queue.repeatMode]}>`), iconURL: client.user.displayAvatarURL({ size: 1024, dynamic: true }) })
+ref_repos/Music-bot-Node/buttons/queue.js:17:        .setDescription(`Current ${queue.currentTrack.title}\n\n${tracks.slice(0, 5).join('\n')}\n\n${nextSongs}`)
+ref_repos/Music-bot-Node/events/Player/playerSkip.js:4:module.exports = (queue, track) => {
+ref_repos/Music-bot-Node/events/Player/playerSkip.js:11:        queue.metadata.channel.send({ embeds: [embed], iconURL: track.thumbnail });
+ref_repos/Music-bot-Node/buttons/nowplaying.js:4:module.exports = async ({ client, inter, queue }) => {
+ref_repos/Music-bot-Node/buttons/nowplaying.js:5:    if (!queue?.isPlaying()) return inter.editReply({ content: await Translate(`No music currently playing... try again ? <❌>`) });
+ref_repos/Music-bot-Node/buttons/nowplaying.js:7:    const track = queue.currentTrack;
+ref_repos/Music-bot-Node/buttons/nowplaying.js:8:    const methods = ['disabled', 'track', 'queue'];
+ref_repos/Music-bot-Node/buttons/nowplaying.js:11:    const progress = queue.node.createProgressBar();
+ref_repos/Music-bot-Node/buttons/nowplaying.js:16:        .setDescription(await Translate(`Volume <**${queue.node.volume}**%\n> <Duration **${trackDuration}**\n> <Progress ${progress}\n> <Loop mode **${methods[queue.repeatMode]}**\n> <Requested by ${track.requestedBy}>`))
+ref_repos/Music-bot-Node/commands/music/volume.js:3:const { useQueue } = require('discord-player');
+ref_repos/Music-bot-Node/commands/music/volume.js:7:    name: 'volume',
+ref_repos/Music-bot-Node/commands/music/volume.js:8:    description:('Adjust the volume'),
+ref_repos/Music-bot-Node/commands/music/volume.js:9:    voiceChannel: true,
+ref_repos/Music-bot-Node/commands/music/volume.js:12:            name: 'volume',
+ref_repos/Music-bot-Node/commands/music/volume.js:13:            description:('The new volume'),
+ref_repos/Music-bot-Node/commands/music/volume.js:22:        const queue = useQueue(inter.guild);
+ref_repos/Music-bot-Node/commands/music/volume.js:23:        if (!queue?.isPlaying()) return inter.editReply({ content: await Translate(`No music currently playing <${inter.member}>... try again ? <❌>`) });
+ref_repos/Music-bot-Node/commands/music/volume.js:25:        const vol = inter.options.getNumber('volume');
+ref_repos/Music-bot-Node/commands/music/volume.js:26:        if (queue.node.volume === vol) return inter.editReply({ content: await Translate(`The new volume is already the current one <${inter.member}>... try again ? <❌>`) });
+ref_repos/Music-bot-Node/commands/music/volume.js:28:        const success = queue.node.setVolume(vol);
+ref_repos/Music-bot-Node/commands/music/volume.js:30:        return inter.editReply({ content: success ? await Translate(`The volume has been modified to <${vol}/${maxVol}%> <🔊>`) : `Something went wrong ${inter.member}... try again ? ❌` });
+ref_repos/Music-bot-Node/events/Player/playerFinish.js:1:module.exports = (queue) => {
+ref_repos/Music-bot-Node/events/Player/playerFinish.js:2:    if (queue.metadata.lyricsThread) {
+ref_repos/Music-bot-Node/events/Player/playerFinish.js:3:        queue.metadata.lyricsThread.delete();
+ref_repos/Music-bot-Node/events/Player/playerFinish.js:4:        queue.setMetadata({
+ref_repos/Music-bot-Node/events/Player/playerFinish.js:5:            channel: queue.metadata.channel
+ref_repos/Music-bot-Node/buttons/lyrics.js:2:const { useMainPlayer } = require('discord-player');
+ref_repos/Music-bot-Node/buttons/lyrics.js:5:module.exports = async ({ inter, queue }) => {
+ref_repos/Music-bot-Node/buttons/lyrics.js:6:    const player = useMainPlayer();
+ref_repos/Music-bot-Node/buttons/lyrics.js:7:    if (!queue?.isPlaying()) return inter.editReply({ content: await Translate(`No music currently playing <${inter.member}>... try again ? <❌>`) });
+ref_repos/Music-bot-Node/buttons/lyrics.js:9:    const results = await player.lyrics
+ref_repos/Music-bot-Node/buttons/lyrics.js:11:            q: queue.currentTrack.title
+ref_repos/Music-bot-Node/buttons/lyrics.js:19:    if (!lyrics?.plainLyrics) return inter.editReply({ content: await Translate(`No lyrics found for <${queue.currentTrack.title}>... try again ? <❌>`) });
+ref_repos/Music-bot-Node/buttons/lyrics.js:24:        .setTitle(`Lyrics for ${queue.currentTrack.title}`)
+ref_repos/Music-bot-Node/events/Player/playerError.js:4:module.exports = (queue, error) => {
+ref_repos/Music-bot-Node/events/Player/playerError.js:11:        queue.metadata.channel.send({ embeds: [embed] });
+ref_repos/Music-bot-Node/events/Player/playerError.js:13:        console.log((`Error emitted from the player <${error.message}>`))
+ref_repos/Music-bot-Node/commands/music/syncedlyrics.js:1:const { useMainPlayer, useQueue } = require('discord-player');
+ref_repos/Music-bot-Node/commands/music/syncedlyrics.js:7:    voiceChannel: true,
+ref_repos/Music-bot-Node/commands/music/syncedlyrics.js:10:        const player = useMainPlayer();
+ref_repos/Music-bot-Node/commands/music/syncedlyrics.js:11:        const queue = useQueue(inter.guild);
+ref_repos/Music-bot-Node/commands/music/syncedlyrics.js:12:        if (!queue?.isPlaying()) return inter.editReply({ content: await Translate(`No music currently playing <${inter.member}>... try again ? <❌>`) });
+ref_repos/Music-bot-Node/commands/music/syncedlyrics.js:14:        const metadataThread = queue.metadata.lyricsThread;
+ref_repos/Music-bot-Node/commands/music/syncedlyrics.js:15:        if (metadataThread && !metadataThread.archived) return inter.editReply({ content: await Translate(`Lyrics thread already created <${inter.member}> ! <${queue.metadata.lyricsThread}>`) });
+ref_repos/Music-bot-Node/commands/music/syncedlyrics.js:17:        const results = await player.lyrics
+ref_repos/Music-bot-Node/commands/music/syncedlyrics.js:19:                q: queue.currentTrack.title
+ref_repos/Music-bot-Node/commands/music/syncedlyrics.js:27:        if (!lyrics?.plainLyrics) return inter.editReply({ content: await Translate(`No lyrics found for <${queue.currentTrack.title}>... try again ? <❌>`) });
+ref_repos/Music-bot-Node/commands/music/syncedlyrics.js:29:        const thread = await queue.metadata.channel.threads.create({
+ref_repos/Music-bot-Node/commands/music/syncedlyrics.js:30:            name: `Lyrics of ${queue.currentTrack.title}`
+ref_repos/Music-bot-Node/commands/music/syncedlyrics.js:33:        queue.setMetadata({
+ref_repos/Music-bot-Node/commands/music/syncedlyrics.js:34:            channel: queue.metadata.channel,
+ref_repos/Music-bot-Node/commands/music/syncedlyrics.js:38:        const syncedLyrics = queue?.syncedLyrics(lyrics);
+ref_repos/Music-bot-Node/buttons/loop.js:1:const { QueueRepeatMode } = require('discord-player');
+ref_repos/Music-bot-Node/buttons/loop.js:4:module.exports = async ({ inter, queue }) => {
+ref_repos/Music-bot-Node/buttons/loop.js:5:    const methods = ['disabled', 'track', 'queue'];
+ref_repos/Music-bot-Node/buttons/loop.js:6:    if (!queue?.isPlaying()) return inter.editReply({ content: await Translate(`No music currently playing... try again ? <❌>`) });
+ref_repos/Music-bot-Node/buttons/loop.js:8:    if (queue.repeatMode === 2) queue.setRepeatMode(QueueRepeatMode.OFF)
+ref_repos/Music-bot-Node/buttons/loop.js:9:    else queue.setRepeatMode(queue.repeatMode + 1)
+ref_repos/Music-bot-Node/buttons/loop.js:11:    return inter.editReply({ content: await Translate(`Loop made has been set to <**${methods[queue.repeatMode]}**>.<✅>`) });
+ref_repos/Music-bot-Node/events/Player/error.js:4:module.exports = (queue, error) => {
+ref_repos/Music-bot-Node/events/Player/error.js:11:        queue.metadata.channel.send({ embeds: [embed] });
+ref_repos/Music-bot-Node/commands/music/stop.js:2:const { useQueue } = require('discord-player');
+ref_repos/Music-bot-Node/commands/music/stop.js:8:    voiceChannel: true,
+ref_repos/Music-bot-Node/commands/music/stop.js:11:        const queue = useQueue(inter.guild);
+ref_repos/Music-bot-Node/commands/music/stop.js:12:        if (!queue?.isPlaying()) return inter.editReply({ content: await Translate(`No music currently playing <${inter.member}>... try again ? <❌>`) });
+ref_repos/Music-bot-Node/commands/music/stop.js:14:        queue.delete();
+ref_repos/Music-bot-Node/buttons/back.js:3:module.exports = async ({ inter, queue }) => {
+ref_repos/Music-bot-Node/buttons/back.js:4:  if (!queue?.isPlaying())
+ref_repos/Music-bot-Node/buttons/back.js:8:  if (!queue.history.previousTrack)
+ref_repos/Music-bot-Node/buttons/back.js:13:  await queue.history.back();
+ref_repos/Music-bot-Node/events/Player/emptyQueue.js:4:module.exports = (queue) => {
+ref_repos/Music-bot-Node/events/Player/emptyQueue.js:8:        .setAuthor({ name: await Translate('No more songs in the queue!  <❌>')})
+ref_repos/Music-bot-Node/events/Player/emptyQueue.js:11:        queue.metadata.channel.send({ embeds: [embed] });
+ref_repos/Music-bot-Node/commands/music/skip.js:2:const { useQueue } = require('discord-player');
+ref_repos/Music-bot-Node/commands/music/skip.js:6:    name: 'skip',
+ref_repos/Music-bot-Node/commands/music/skip.js:8:    voiceChannel: true,
+ref_repos/Music-bot-Node/commands/music/skip.js:11:        const queue = useQueue(inter.guild);
+ref_repos/Music-bot-Node/commands/music/skip.js:12:        if (!queue?.isPlaying()) return inter.editReply({ content: await Translate(`No music currently playing <${inter.member}>... try again ? <❌>`) });
+ref_repos/Music-bot-Node/commands/music/skip.js:14:        const success = queue.node.skip();
+ref_repos/Music-bot-Node/commands/music/skip.js:18:            .setAuthor({ name: success ? await Translate(`Current music <${queue.currentTrack.title}> skipped <✅>`) : await Translate(`Something went wrong <${inter.member}>... try again ? <❌>`) });
+ref_repos/Music-bot-Node/events/Player/emptyChannel.js:4:module.exports = (queue) => {
+ref_repos/Music-bot-Node/events/Player/emptyChannel.js:5:    if (queue.metadata.lyricsThread) {
+ref_repos/Music-bot-Node/events/Player/emptyChannel.js:6:        queue.metadata.lyricsThread.delete();
+ref_repos/Music-bot-Node/events/Player/emptyChannel.js:7:        queue.setMetadata({
+ref_repos/Music-bot-Node/events/Player/emptyChannel.js:8:            channel: queue.metadata.channel
+ref_repos/Music-bot-Node/events/Player/emptyChannel.js:14:        .setAuthor({ name: await Translate(`Nobody is in the voice channel, leaving the voice channel!  <❌>`)})
+ref_repos/Music-bot-Node/events/Player/emptyChannel.js:17:        queue.metadata.channel.send({ embeds: [embed] });
+ref_repos/Music-bot-Node/events/Player/disconnect.js:4:module.exports = (queue) => {
+ref_repos/Music-bot-Node/events/Player/disconnect.js:5:    if (queue.metadata.lyricsThread) {
+ref_repos/Music-bot-Node/events/Player/disconnect.js:6:        queue.metadata.lyricsThread.delete();
+ref_repos/Music-bot-Node/events/Player/disconnect.js:7:        queue.setMetadata({
+ref_repos/Music-bot-Node/events/Player/disconnect.js:8:            channel: queue.metadata.channel
+=== JS manifest ===
+{
+  "name": "discord-musicbot",
+  "version": "5.0.0-beta",
+  "description": "Very simple discord music bot with the discord.js with Song Name playing. It can able to play music with the song name",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index",
+    "rm-logs": "rm logs.log",
+    "lint": "prettier --check .",
+    "deploy": "node deploy/deployGlobal",
+    "guild": "node deploy/deployGuild",
+    "destroy-guild": "node deploy/destroyGuild",
+    "destroy-global": "node deploy/destroyGlobal",
+    "ddev": "cd dashboard && npm run dev",
+    "dbuild": "cd dashboard && npm run build && npm run export",
+    "dstart": "cd dashboard && npm run start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SudhanPlayz/Discord-MusicBot.git"
+  },
+  "engines": {
+    "node": ">=16.x <=16.16"
+  },
+  "keywords": [
+    "discord",
+    "discord-bot",
+    "discord-musicbot",
+    "music",
+    "discord-music"
+  ],
+  "authors": [
+    "SudhanPlayz",
+    "DarrenOfficial"
+  ],
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/SudhanPlayz/Discord-MusicBot/issues"
+  },
+  "homepage": "https://github.com/SudhanPlayz/Discord-MusicBot#readme",
+  "dependencies": {
+    "@discordjs/builders": "^1.4.0",
+    "@discordjs/rest": "^1.5.0",
+    "axios": "^0.27.0",
+    "better-erela.js-apple": "^0.1.0",
+    "better-erela.js-spotify": "1.3.9",
+    "colors": "1.3.3",
+    "discord-api-types": "0.37.1",
+    "discord-together": "^1.3.25",
+    "discord.js": "^13.14.0",
+    "dotenv": "^16.0.1",
+    "ejs": "^3.1.6",
+    "erela.js": "^2.3.3",
+    "erela.js-deezer": "^1.0.7",
+    "erela.js-facebook": "^1.0.4",
+    "erela.js-filters": "^1.2.6",
+    "express": "^4.17.1",
+    "express-rate-limit": "^6.2.0",
+    "express-session": "^1.17.3",
+    "express-ws": "^5.0.2",
+    "js-yaml": "^4.1.0",
+    "jsoning": "^0.13.0",
+    "lodash": "^4.17.21",
+    "moment": "^2.29.1",
+    "moment-duration-format": "^2.3.2",
+    "node-fetch": "2.6.7",
+    "os": "^0.1.2",
+    "passport": "^0.6.0",
+    "passport-discord": "^0.1.4",
+    "pretty-ms": "^7.0.1",
+    "rlyrics": "^2.0.1",
+    "systeminformation": "^5.9.12",
+    "winston": "^3.3.3",
+    "youtube-sr": "^4.3.4"
+  },
+  "devDependencies": {
+    "prettier": "2.6.2"
+  },
+  "volta": {
+    "node": "16.15.1",
+    "yarn": "3.3.0"
+  }
+}
+=== JS key files ===
+ref_repos/Discord-MusicBot/LICENSE.md
+ref_repos/Discord-MusicBot/README.md
+ref_repos/Discord-MusicBot/commands/context/play.js
+ref_repos/Discord-MusicBot/commands/slash/247.js
+ref_repos/Discord-MusicBot/commands/slash/autoleave.js
+ref_repos/Discord-MusicBot/commands/slash/autopause.js
+ref_repos/Discord-MusicBot/commands/slash/autoqueue.js
+ref_repos/Discord-MusicBot/commands/slash/clean.js
+ref_repos/Discord-MusicBot/commands/slash/clear.js
+ref_repos/Discord-MusicBot/commands/slash/filters.js
+ref_repos/Discord-MusicBot/commands/slash/guildleave.js
+ref_repos/Discord-MusicBot/commands/slash/help.js
+ref_repos/Discord-MusicBot/commands/slash/invite.js
+ref_repos/Discord-MusicBot/commands/slash/loop.js
+ref_repos/Discord-MusicBot/commands/slash/loopq.js
+ref_repos/Discord-MusicBot/commands/slash/lyrics.js
+ref_repos/Discord-MusicBot/commands/slash/move.js
+ref_repos/Discord-MusicBot/commands/slash/nowplaying.js
+ref_repos/Discord-MusicBot/commands/slash/pause.js
+ref_repos/Discord-MusicBot/commands/slash/ping.js
+ref_repos/Discord-MusicBot/commands/slash/play.js
+ref_repos/Discord-MusicBot/commands/slash/previous.js
+ref_repos/Discord-MusicBot/commands/slash/queue.js
+ref_repos/Discord-MusicBot/commands/slash/reload.js
+ref_repos/Discord-MusicBot/commands/slash/remove.js
+ref_repos/Discord-MusicBot/commands/slash/replay.js
+ref_repos/Discord-MusicBot/commands/slash/resume.js
+ref_repos/Discord-MusicBot/commands/slash/save.js
+ref_repos/Discord-MusicBot/commands/slash/search.js
+ref_repos/Discord-MusicBot/commands/slash/seek.js
+ref_repos/Discord-MusicBot/commands/slash/shuffle.js
+ref_repos/Discord-MusicBot/commands/slash/skip.js
+ref_repos/Discord-MusicBot/commands/slash/skipto.js
+ref_repos/Discord-MusicBot/commands/slash/stats.js
+ref_repos/Discord-MusicBot/commands/slash/stop.js
+ref_repos/Discord-MusicBot/commands/slash/summon.js
+ref_repos/Discord-MusicBot/commands/slash/volume.js
+ref_repos/Discord-MusicBot/dashboard/README.md
+ref_repos/Discord-MusicBot/dashboard/package.json
+ref_repos/Discord-MusicBot/dashboard/utils/dashboard.ts
+ref_repos/Discord-MusicBot/dashboard/utils/data.ts
+ref_repos/Discord-MusicBot/events/interactionCreate.js
+ref_repos/Discord-MusicBot/events/messageCreate.js
+ref_repos/Discord-MusicBot/events/messageDelete.js
+ref_repos/Discord-MusicBot/events/raw.js
+ref_repos/Discord-MusicBot/events/ready.js
+ref_repos/Discord-MusicBot/events/voiceStateUpdate.js
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js
+ref_repos/Discord-MusicBot/lib/EpicPlayer.d.ts
+ref_repos/Discord-MusicBot/lib/EpicPlayer.js
+ref_repos/Discord-MusicBot/lib/Logger.js
+ref_repos/Discord-MusicBot/lib/SlashCommand.js
+ref_repos/Discord-MusicBot/package.json
+ref_repos/Discord-MusicBot/util/Controller.js
+ref_repos/Discord-MusicBot/util/db.js
+ref_repos/Discord-MusicBot/util/getChannel.js
+ref_repos/Discord-MusicBot/util/getConfig.js
+ref_repos/Discord-MusicBot/util/getLavalink.js
+ref_repos/Discord-MusicBot/util/guildDb.js
+ref_repos/Discord-MusicBot/util/loadCommands.js
+=== JS feature symbols ===
+ref_repos/Discord-MusicBot/util/guildDb.js:4: * Function should only be `getter` and `setter` for each guild data:
+ref_repos/Discord-MusicBot/util/guildDb.js:25:const _guildDbDir = join(__dirname,"..",".guild_dbs");
+ref_repos/Discord-MusicBot/util/guildDb.js:28:    readdirSync(_guildDbDir);
+ref_repos/Discord-MusicBot/util/guildDb.js:31:        mkdirSync(_guildDbDir);
+ref_repos/Discord-MusicBot/util/guildDb.js:33:        console.error("[ERROR] Can't create guild database folder, module might won't work properly.");
+ref_repos/Discord-MusicBot/util/guildDb.js:37:const _getGuildDbName = (guild_id) => {
+ref_repos/Discord-MusicBot/util/guildDb.js:38:    return "guild-"+guild_id;
+ref_repos/Discord-MusicBot/util/guildDb.js:41:const _getGuildDbPath = (guild_id) => {
+ref_repos/Discord-MusicBot/util/guildDb.js:42:    return join(_guildDbDir, _getGuildDbName(guild_id)+".json");
+ref_repos/Discord-MusicBot/util/guildDb.js:45:const _getOrCreateGuildDb = (guild_id) => {
+ref_repos/Discord-MusicBot/util/guildDb.js:46:    const dbName = _getGuildDbName(guild_id);
+ref_repos/Discord-MusicBot/util/guildDb.js:53:            create(dbName,_getGuildDbPath(guild_id));
+ref_repos/Discord-MusicBot/util/guildDb.js:63:const _deleteGuildDb = (guild_id) => {
+ref_repos/Discord-MusicBot/util/guildDb.js:64:    const dbName = _getGuildDbName(guild_id);
+ref_repos/Discord-MusicBot/util/guildDb.js:69: * Wipe and delete all guild's data
+ref_repos/Discord-MusicBot/util/guildDb.js:70: * @param {string} guild_id 
+ref_repos/Discord-MusicBot/util/guildDb.js:73:const deleteGuildDatabase = (guild_id) => {
+ref_repos/Discord-MusicBot/util/guildDb.js:74:    return _deleteGuildDb(guild_id);
+ref_repos/Discord-MusicBot/util/guildDb.js:78: * Set guild dj-only mode
+ref_repos/Discord-MusicBot/util/guildDb.js:79: * @param {string} guild_id 
+ref_repos/Discord-MusicBot/util/guildDb.js:82:const setDjOnly = (guild_id, djOnly) => {
+ref_repos/Discord-MusicBot/util/guildDb.js:83:    const d = _getOrCreateGuildDb(guild_id);
+ref_repos/Discord-MusicBot/util/guildDb.js:86:    set(_getGuildDbName(guild_id), d);
+ref_repos/Discord-MusicBot/util/guildDb.js:90: * Get guild dj-only mode
+ref_repos/Discord-MusicBot/util/guildDb.js:91: * @param {string} guild_id 
+ref_repos/Discord-MusicBot/util/guildDb.js:94:const getDjOnly = (guild_id) => {
+ref_repos/Discord-MusicBot/util/guildDb.js:95:    return !!_getOrCreateGuildDb(guild_id)?.djOnly;
+ref_repos/Discord-MusicBot/util/getChannel.js:9:		if (!interaction.member.voice.channel) {
+ref_repos/Discord-MusicBot/util/getChannel.js:13:						"You must be in a voice channel to use this command!",
+ref_repos/Discord-MusicBot/util/getChannel.js:20:			interaction.guild.members.me.voice.channel &&
+ref_repos/Discord-MusicBot/util/getChannel.js:21:			interaction.member.voice.channel.id !==
+ref_repos/Discord-MusicBot/util/getChannel.js:22:			interaction.guild.members.me.voice.channel.id
+ref_repos/Discord-MusicBot/util/getChannel.js:27:						"You must be in the same voice channel as me to use this command!",
+ref_repos/Discord-MusicBot/util/getChannel.js:33:		if (!interaction.member.voice.channel.joinable) {
+ref_repos/Discord-MusicBot/util/getChannel.js:37:						"I don't have enough permission to join your voice channel!",
+ref_repos/Discord-MusicBot/util/getChannel.js:44:		resolve(interaction.member.voice.channel);
+ref_repos/Discord-MusicBot/util/db.js:4: * TODO: Implement guild database, store each guild data on its own json file.
+ref_repos/Discord-MusicBot/util/db.js:118: * Write queue
+ref_repos/Discord-MusicBot/util/db.js:124: * Delete queue
+ref_repos/Discord-MusicBot/util/db.js:129:// queue loop
+ref_repos/Discord-MusicBot/util/Controller.js:8:	let guild = client.guilds.cache.get(interaction.customId.split(":")[1]);
+ref_repos/Discord-MusicBot/util/Controller.js:10:	let player = client.manager.get(guild.id);
+ref_repos/Discord-MusicBot/util/Controller.js:23:	if (!interaction.member.voice.channel) {
+ref_repos/Discord-MusicBot/util/Controller.js:27:				"❌ | **You must be in a voice channel to use this action!**",
+ref_repos/Discord-MusicBot/util/Controller.js:33:		interaction.guild.members.me.voice.channel &&
+ref_repos/Discord-MusicBot/util/Controller.js:34:		!interaction.guild.members.me.voice.channel.equals(interaction.member.voice.channel)
+ref_repos/Discord-MusicBot/util/Controller.js:39:				"❌ | **You must be in the same voice channel as me to use this action!**",
+ref_repos/Discord-MusicBot/util/Controller.js:45:		player.queue.clear();
+ref_repos/Discord-MusicBot/util/Controller.js:48:		client.warn(`Player: ${ player.options.guild } | Successfully stopped the player`);
+ref_repos/Discord-MusicBot/util/Controller.js:61:			components: [client.createController(player.options.guild, player)],
+ref_repos/Discord-MusicBot/util/Controller.js:68:		const previousSong = player.queue.previous;
+ref_repos/Discord-MusicBot/util/Controller.js:69:		const currentSong = player.queue.current;
+ref_repos/Discord-MusicBot/util/Controller.js:70:		const nextSong = player.queue[0]
+ref_repos/Discord-MusicBot/util/Controller.js:71:        if (!player.queue.previous ||
+ref_repos/Discord-MusicBot/util/Controller.js:72:            player.queue.previous === player.queue.current ||
+ref_repos/Discord-MusicBot/util/Controller.js:73:            player.queue.previous === player.queue[0]) {
+ref_repos/Discord-MusicBot/util/Controller.js:85:			player.queue.splice(0, 0, currentSong)
+ref_repos/Discord-MusicBot/util/Controller.js:92:		if (!player || (!player.playing && player.queue.totalSize === 0)) {
+ref_repos/Discord-MusicBot/util/Controller.js:107:			if (player.paused) {
+ref_repos/Discord-MusicBot/util/Controller.js:108:				player.pause(false);
+ref_repos/Discord-MusicBot/util/Controller.js:110:				player.pause(true);
+ref_repos/Discord-MusicBot/util/Controller.js:112:			client.warn(`Player: ${ player.options.guild } | Successfully ${ player.paused? "paused" : "resumed" } the player`);
+ref_repos/Discord-MusicBot/util/Controller.js:115:				components: [client.createController(player.options.guild, player)],
+ref_repos/Discord-MusicBot/util/Controller.js:121:                const song = player.queue.current;
+ref_repos/Discord-MusicBot/util/Controller.js:123:                if (player.queue[0] == undefined && (!autoQueue || autoQueue === false)) {
+ref_repos/Discord-MusicBot/util/Controller.js:129:					.setDescription(`There is nothing after [${ song.title }](${ song.uri }) in the queue.`),
+ref_repos/Discord-MusicBot/util/Controller.js:139:		} else if (player.queueRepeat) {
+ref_repos/Discord-MusicBot/util/Controller.js:144:		client.warn(`Player: ${player.options.guild} | Successfully toggled loop ${player.trackRepeat ? "on" : player.queueRepeat ? "queue on" : "off"} the player`);
+ref_repos/Discord-MusicBot/util/Controller.js:147:			components: [client.createController(player.options.guild, player)],
+ref_repos/Discord-MusicBot/docker-compose.yml:13:    volumes:
+ref_repos/Discord-MusicBot/docker-compose.yml:23:    volumes:
+ref_repos/Discord-MusicBot/docker-compose.yml:24:      - ./docker/application.yml:/opt/Lavalink/application.yml:ro
+ref_repos/Discord-MusicBot/package.json:11:    "guild": "node deploy/deployGuild",
+ref_repos/Discord-MusicBot/package.json:12:    "destroy-guild": "node deploy/destroyGuild",
+ref_repos/Discord-MusicBot/package.json:46:    "better-erela.js-spotify": "1.3.9",
+ref_repos/Discord-MusicBot/package.json:74:    "youtube-sr": "^4.3.4"
+ref_repos/Discord-MusicBot/lib/EpicPlayer.js:6:	"Player",
+ref_repos/Discord-MusicBot/lib/EpicPlayer.js:7:	(Player) =>
+ref_repos/Discord-MusicBot/lib/EpicPlayer.js:8:		class extends Player {
+ref_repos/Discord-MusicBot/lib/EpicPlayer.js:15:			 * Set's (maps) the client's resume message so it can be deleted afterwards
+ref_repos/Discord-MusicBot/lib/EpicPlayer.js:21:				if (this.pausedMessage && !client.isMessageDeleted(this.pausedMessage)) {
+ref_repos/Discord-MusicBot/lib/EpicPlayer.js:22:					this.pausedMessage.delete();
+ref_repos/Discord-MusicBot/lib/EpicPlayer.js:23:					client.markMessageAsDeleted(this.pausedMessage);
+ref_repos/Discord-MusicBot/lib/EpicPlayer.js:25:				return (this.resumeMessage = message);
+ref_repos/Discord-MusicBot/lib/EpicPlayer.js:29:			 * Set's (maps) the client's paused message so it can be deleted afterwards
+ref_repos/Discord-MusicBot/lib/EpicPlayer.js:35:				if (this.resumeMessage && !client.isMessageDeleted(this.resumeMessage)) {
+ref_repos/Discord-MusicBot/lib/EpicPlayer.js:36:					this.resumeMessage.delete();
+ref_repos/Discord-MusicBot/lib/EpicPlayer.js:37:					client.markMessageAsDeleted(this.resumeMessage);
+ref_repos/Discord-MusicBot/lib/EpicPlayer.js:39:				return (this.pausedMessage = message);
+ref_repos/Discord-MusicBot/lib/EpicPlayer.d.ts:2:import { Player } from "erela.js";
+ref_repos/Discord-MusicBot/lib/EpicPlayer.d.ts:5:declare class EpicPlayer extends Player {
+ref_repos/Discord-MusicBot/lib/EpicPlayer.d.ts:6:    private resumeMessage: Message<boolean>;
+ref_repos/Discord-MusicBot/lib/EpicPlayer.d.ts:7:    private pausedMessage: Message<boolean>;
+ref_repos/Discord-MusicBot/lib/EpicPlayer.d.ts:17:export default EpicPlayer;
+ref_repos/Discord-MusicBot/deploy/destroyGuild.js:18:			"Enter the guild id you wanted to delete commands: ",
+ref_repos/Discord-MusicBot/deploy/destroyGuild.js:19:			async (guild) => {
+ref_repos/Discord-MusicBot/deploy/destroyGuild.js:22:					.put(Routes.applicationGuildCommands(config.clientId, guild), {
+ref_repos/Discord-MusicBot/deploy/deployGuild.js:20:		"Enter the guild id you wanted to deploy commands: ",
+ref_repos/Discord-MusicBot/deploy/deployGuild.js:21:		async (guild) => {
+ref_repos/Discord-MusicBot/deploy/deployGuild.js:22:			console.log("Deploying commands to guild...");
+ref_repos/Discord-MusicBot/deploy/deployGuild.js:24:				.put(Routes.applicationGuildCommands(config.clientId, guild), {
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:17:const spotify = require("better-erela.js-spotify").default;
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:22:const getLavalink = require("../util/getLavalink");
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:26:const { default: EpicPlayer } = require("./EpicPlayer");
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:61:    this.getLavalink = getLavalink;
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:116:     * will hold at most 100 tracks, for the sake of autoqueue
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:124:        new spotify(),
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:136:        let guild = client.guilds.cache.get(id);
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:137:        if (guild) {
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:138:          guild.shard.send(payload);
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:144:          `Node: ${node.options.identifier} | Lavalink node is connected.`
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:149:          `Node: ${node.options.identifier} | Lavalink node is reconnecting.`
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:154:          `Node: ${node.options.identifier} | Lavalink node is destroyed.`
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:159:          `Node: ${node.options.identifier} | Lavalink node is disconnected.`
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:164:          `Node: ${node.options.identifier} | Lavalink node has an error: ${err.message}.`
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:170:          `Player: ${player.options.guild} | Track had an error: ${err.message}.`
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:173:        let song = player.queue.current;
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:193:        let song = player.queue.current;
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:210:        const guild = client.guilds.cache.get(player.guild);
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:211:        if (!guild) {
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:214:        const channel = guild.channels.cache.get(player.textChannel);
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:233:          player.voiceChannel = newChannel;
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:234:          setTimeout(() => player.pause(false), 1000);
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:244:          `Player: ${
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:245:            player.options.guild
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:247:            client.guilds.cache.get(player.options.guild)
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:248:              ? client.guilds.cache.get(player.options.guild).name
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:249:              : "a guild"
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:255:          `Player: ${player.options.guild} | A wild player has been destroyed in ${client.guilds.cache.get(player.options.guild)
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:256:              ? client.guilds.cache.get(player.options.guild).name
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:257:              : "a guild"
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:271:        /** @param {EpicPlayer} player */ async (player, track) => {
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:279:            `Player: ${
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:280:              player.options.guild
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:319:                client.createController(player.options.guild, player),
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:329:          /** @param {EpicPlayer} */ async (player) => {
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:331:              player.queue.clear();
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:341:        "queueEnd",
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:342:        /** @param {EpicPlayer} */ async (player, track) => {
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:348:            const search = `https://www.youtube.com/watch?v=${identifier}&list=RD${identifier}`;
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:375:            player.queue.previous = track;
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:379:            let queueEmbed = new MessageEmbed()
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:382:                name: "The queue has ended",
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:389:              .send({ embeds: [queueEmbed] });
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:411:                      `Player: ${player.options.guild} | Still playing`
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:417:                  `Player: ${
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:418:                    player.options.guild
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:423:                  `Something unexpected happened with player ${player.options.guild}`
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:552:   * @param {import("discord.js").VoiceChannel} voiceChannel
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:554:  createPlayer(textChannel, voiceChannel) {
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:556:      guild: textChannel.guild.id,
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:557:      voiceChannel: voiceChannel.id,
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:560:      volume: this.config.defaultVolume,
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:564:  createController(guild, player) {
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:568:        .setCustomId(`controller:${guild}:Stop`)
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:573:        .setCustomId(`controller:${guild}:Replay`)
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:578:        .setCustomId(`controller:${guild}:PlayAndPause`)
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:583:        .setCustomId(`controller:${guild}:Next`)
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:590:            : player.queueRepeat
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:594:        .setCustomId(`controller:${guild}:Loop`)
+ref_repos/Discord-MusicBot/lib/DiscordMusicBot.js:595:        .setEmoji(player.trackRepeat ? "🔂" : player.queueRepeat ? "🔁" : "🔁")
+ref_repos/Discord-MusicBot/app.json:9:    "youtube",
+ref_repos/Discord-MusicBot/api/routes/dashboard.js:11:		servers: client.guilds.cache.size,
+ref_repos/Discord-MusicBot/config.js:9:	scopes: ["identify", "guilds", "applications.commands"], //- Discord OAuth2 Scopes
+ref_repos/Discord-MusicBot/config.js:12:	defaultVolume: 100, //- Sets the default volume of the bot, You can change this number anywhere from 1 to 100
+ref_repos/Discord-MusicBot/config.js:16:	disconnectTime: 30000, //- How long should the bot wait before disconnecting from the voice channel (in miliseconds). Set to 1 for instant disconnect.
+ref_repos/Discord-MusicBot/config.js:17:	twentyFourSeven: false, //- When set to true, the bot will never disconnect from the voice channel
+ref_repos/Discord-MusicBot/config.js:18:	autoQueue: false, //- When set to true, related songs will automatically be added to the queue
+ref_repos/Discord-MusicBot/config.js:19:	autoPause: true, //- When set to true, music will automatically be paused if everyone leaves the voice channel
+ref_repos/Discord-MusicBot/config.js:20:	autoLeave: false, //- When set to true, the bot will automatically leave when no one is in the voice channel (can be combined with 24/7 to always be in voice channel until everyone leaves; if 24/7 is on disconnectTime will add a disconnect delay after everyone leaves.)
+ref_repos/Discord-MusicBot/config.js:25:	// Lavalink server; public lavalink -> https://lavalink-list.darrennathanael.com/; create one yourself -> https://darrennathanael.com/post/how-to-lavalink
+ref_repos/Discord-MusicBot/config.js:33:			retryDelay: 40, //- Delay between reconnect attempts if connection is lost.
+ref_repos/Discord-MusicBot/events/voiceStateUpdate.js:11:	// get guild and player
+ref_repos/Discord-MusicBot/events/voiceStateUpdate.js:12:	let guildId = newState.guild.id;
+ref_repos/Discord-MusicBot/events/voiceStateUpdate.js:13:	const player = client.manager.get(guildId);
+ref_repos/Discord-MusicBot/events/voiceStateUpdate.js:15:	// check if the bot is active (playing, paused or empty does not matter (return otherwise)
+ref_repos/Discord-MusicBot/events/voiceStateUpdate.js:40:		return player.pause(true);
+ref_repos/Discord-MusicBot/events/voiceStateUpdate.js:47:		return player.pause(false);
+ref_repos/Discord-MusicBot/events/voiceStateUpdate.js:51:		if (oldState.channel.id === player.voiceChannel) {
+ref_repos/Discord-MusicBot/events/voiceStateUpdate.js:54:		if (newState.channel.id === player.voiceChannel) {
+ref_repos/Discord-MusicBot/events/voiceStateUpdate.js:66:	// check if the bot's voice channel is involved (return otherwise)
+ref_repos/Discord-MusicBot/events/voiceStateUpdate.js:67:	if (!stateChange.channel || stateChange.channel.id !== player.voiceChannel) {
+ref_repos/Discord-MusicBot/events/voiceStateUpdate.js:76:		            if (members === 1 && player.paused && members !== player.prevMembers){
+ref_repos/Discord-MusicBot/events/voiceStateUpdate.js:77:					player.pause(false);
+ref_repos/Discord-MusicBot/events/voiceStateUpdate.js:82:							`Playing  [${ player.queue.current.title }](${ player.queue.current.uri })`,
+ref_repos/Discord-MusicBot/events/voiceStateUpdate.js:84:						.setFooter({ text: `The current song has been resumed.` });
+ref_repos/Discord-MusicBot/events/voiceStateUpdate.js:86:					let resumeMessage = await client.channels.cache
+ref_repos/Discord-MusicBot/events/voiceStateUpdate.js:89:					player.setResumeMessage(client, resumeMessage);
+ref_repos/Discord-MusicBot/events/voiceStateUpdate.js:92:						if (!client.isMessageDeleted(resumeMessage)) {
+ref_repos/Discord-MusicBot/events/voiceStateUpdate.js:93:							resumeMessage.delete();
+ref_repos/Discord-MusicBot/events/voiceStateUpdate.js:94:							client.markMessageAsDeleted(resumeMessage);
+ref_repos/Discord-MusicBot/events/voiceStateUpdate.js:104:				if (members === 0 && !player.paused && player.playing) {
+ref_repos/Discord-MusicBot/events/voiceStateUpdate.js:105:					player.pause(true);
+ref_repos/Discord-MusicBot/events/voiceStateUpdate.js:111:							text: `The current song has been paused because theres no one in the voice channel.`,
+ref_repos/Discord-MusicBot/events/voiceStateUpdate.js:114:					let pausedMessage = await client.channels.cache
+ref_repos/Discord-MusicBot/events/voiceStateUpdate.js:117:					player.setPausedMessage(client, pausedMessage);
+ref_repos/Discord-MusicBot/events/voiceStateUpdate.js:131:									.setFooter({ text: "Left because there is no one left in the voice channel." })
+ref_repos/Discord-MusicBot/events/voiceStateUpdate.js:137:								player.queue.clear();
+ref_repos/Discord-MusicBot/events/voiceStateUpdate.js:149:							.setFooter({ text: "Left because there is no one left in the voice channel." })
+ref_repos/Discord-MusicBot/events/voiceStateUpdate.js:160:				if (members === 0 && !player.paused && player.playing && twentyFourSeven) {
+ref_repos/Discord-MusicBot/events/voiceStateUpdate.js:161:					player.pause(true);
+ref_repos/Discord-MusicBot/events/voiceStateUpdate.js:167:							text: `The current song has been paused because theres no one in the voice channel.`,
+ref_repos/Discord-MusicBot/events/voiceStateUpdate.js:170:					let pausedMessage = await client.channels.cache
+ref_repos/Discord-MusicBot/events/voiceStateUpdate.js:173:					player.setPausedMessage(client, pausedMessage);
+ref_repos/Discord-MusicBot/events/voiceStateUpdate.js:183:								.setFooter({ text: "Left because there is no one left in the voice channel." })
+ref_repos/Discord-MusicBot/events/voiceStateUpdate.js:189:							pausedMessage.delete(true);
+ref_repos/Discord-MusicBot/events/voiceStateUpdate.js:190:							player.queue.clear();
+ref_repos/Discord-MusicBot/events/voiceStateUpdate.js:203:						.setFooter({ text: "Left because there is no one left in the voice channel." })
+ref_repos/Discord-MusicBot/events/interactionCreate.js:2:const yt = require("youtube-sr").default;
+ref_repos/Discord-MusicBot/events/interactionCreate.js:49:            /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube(-nocookie)?\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/,
+ref_repos/Discord-MusicBot/events/interactionCreate.js:50:            /^(?:spotify:|https:\/\/[a-z]+\.spotify\.com\/(track\/|user\/(.*)\/playlist\/|playlist\/))(.*)$/,
+ref_repos/Discord-MusicBot/events/interactionCreate.js:51:            /^https?:\/\/(?:www\.)?deezer\.com\/[a-z]+\/(track|album|playlist)\/(\d+)$/,
+ref_repos/Discord-MusicBot/events/interactionCreate.js:52:            /^(?:(https?):\/\/)?(?:(?:www|m)\.)?(soundcloud\.com|snd\.sc)\/(.*)$/,
+ref_repos/Discord-MusicBot/events/interactionCreate.js:53:            /(?:https:\/\/music\.apple\.com\/)(?:.+)?(artist|album|music-video|playlist)\/([\w\-\.]+(\/)+[\w\-\.]+|[^&]+)\/([\w\-\.]+(\/)+[\w\-\.]+|[^&]+)/
+ref_repos/Discord-MusicBot/docker/application.yml:5:  youtube:
+ref_repos/Discord-MusicBot/docker/application.yml:16:    - dependency: "dev.lavalink.youtube:youtube-plugin:1.3.0"
+ref_repos/Discord-MusicBot/docker/application.yml:22:      youtube: false
+ref_repos/Discord-MusicBot/docker/application.yml:24:      soundcloud: true
+ref_repos/Discord-MusicBot/docker/application.yml:30:      volume: true
+ref_repos/Discord-MusicBot/docker/application.yml:40:    bufferDurationMs: 400 # The duration of the NAS buffer. Higher values fare better against longer GC pauses. Duration <= 0 to disable JDA-NAS. Minimum of 40ms, lower values may introduce pauses.
+=== PY key modules ===
+__init__.py
+aliases.py
+autoplaylist.py
+bot.py
+config.py
+constants.py
+constructs.py
+downloader.py
+entry.py
+exceptions.py
+filecache.py
+json.py
+lib/__init__.py
+lib/event_emitter.py
+opus_loader.py
+permissions.py
+player.py
+playlist.py
+spotify.py
+utils.py
+ytdlp_oauth2_plugin.py
+=== PY feature symbols ===
+ref_repos/MusicBot-Python/musicbot/ytdlp_oauth2_plugin.py:22:import yt_dlp.networking  # type: ignore[import-untyped]
+ref_repos/MusicBot-Python/musicbot/ytdlp_oauth2_plugin.py:23:from yt_dlp.extractor.common import InfoExtractor  # type: ignore[import-untyped]
+ref_repos/MusicBot-Python/musicbot/ytdlp_oauth2_plugin.py:24:from yt_dlp.extractor.youtube import (  # type: ignore[import-untyped]
+ref_repos/MusicBot-Python/musicbot/ytdlp_oauth2_plugin.py:27:from yt_dlp.utils.traversal import traverse_obj  # type: ignore[import-untyped]
+ref_repos/MusicBot-Python/musicbot/ytdlp_oauth2_plugin.py:106:        Saves token data to cache.
+ref_repos/MusicBot-Python/musicbot/ytdlp_oauth2_plugin.py:116:        Returns token data from cache.
+ref_repos/MusicBot-Python/musicbot/ytdlp_oauth2_plugin.py:141:            log.warning("Invalid cached OAuth2 token data.")
+ref_repos/MusicBot-Python/musicbot/ytdlp_oauth2_plugin.py:163:    def handle_oauth(self, request: yt_dlp.networking.Request) -> None:
+ref_repos/MusicBot-Python/musicbot/ytdlp_oauth2_plugin.py:323:            importlib.import_module("yt_dlp.extractor.youtube"), inspect.isclass
+ref_repos/MusicBot-Python/musicbot/utils.py:406:    Convert to ASCII if 'allow_unicode' is False. Convert spaces or repeated
+ref_repos/MusicBot-Python/musicbot/utils.py:531:def is_empty_voice_channel(  # pylint: disable=dangerous-default-value
+ref_repos/MusicBot-Python/musicbot/utils.py:532:    voice_channel: Union["VoiceChannel", "StageChannel", None],
+ref_repos/MusicBot-Python/musicbot/utils.py:539:    Check if the given `voice_channel` is figuratively or literally empty.
+ref_repos/MusicBot-Python/musicbot/utils.py:545:    if not voice_channel:
+ref_repos/MusicBot-Python/musicbot/utils.py:546:        log.debug("Cannot count members when voice_channel is None.")
+ref_repos/MusicBot-Python/musicbot/utils.py:550:        if exclude_me and member == voice_channel.guild.me:
+ref_repos/MusicBot-Python/musicbot/utils.py:554:            member.voice
+ref_repos/MusicBot-Python/musicbot/utils.py:556:            and any([member.voice.deaf, member.voice.self_deaf])
+ref_repos/MusicBot-Python/musicbot/utils.py:565:    return not sum(1 for m in voice_channel.members if _check(m))
+ref_repos/MusicBot-Python/musicbot/utils.py:568:def count_members_in_voice(  # pylint: disable=dangerous-default-value
+ref_repos/MusicBot-Python/musicbot/utils.py:569:    voice_channel: Union["VoiceChannel", "StageChannel", None],
+ref_repos/MusicBot-Python/musicbot/utils.py:577:    Counts the number of members in given voice channel.
+ref_repos/MusicBot-Python/musicbot/utils.py:580:    :param: voice_channel:  A VoiceChannel to inspect.
+ref_repos/MusicBot-Python/musicbot/utils.py:587:    if not voice_channel:
+ref_repos/MusicBot-Python/musicbot/utils.py:588:        log.debug("Cannot count members when voice_channel is None.")
+ref_repos/MusicBot-Python/musicbot/utils.py:591:    num_voice = 0
+ref_repos/MusicBot-Python/musicbot/utils.py:592:    for member in voice_channel.members:
+ref_repos/MusicBot-Python/musicbot/utils.py:599:        if exclude_me and member == voice_channel.guild.me:
+ref_repos/MusicBot-Python/musicbot/utils.py:605:        voice = member.voice
+ref_repos/MusicBot-Python/musicbot/utils.py:606:        if not voice:
+ref_repos/MusicBot-Python/musicbot/utils.py:609:        if exclude_deaf and (voice.deaf or voice.self_deaf):
+ref_repos/MusicBot-Python/musicbot/utils.py:615:        num_voice += 1
+ref_repos/MusicBot-Python/musicbot/utils.py:616:    return num_voice
+ref_repos/MusicBot-Python/musicbot/spotify.py:13:from .exceptions import SpotifyError
+ref_repos/MusicBot-Python/musicbot/spotify.py:25:class SpotifyObject:
+ref_repos/MusicBot-Python/musicbot/spotify.py:30:        Manage basic data container properties common to all SpotifyObject types.
+ref_repos/MusicBot-Python/musicbot/spotify.py:51:        """Check if given Spotify API response `data` has 'track' type."""
+ref_repos/MusicBot-Python/musicbot/spotify.py:52:        return SpotifyObject.is_type(data, "track")
+ref_repos/MusicBot-Python/musicbot/spotify.py:56:        """Check if given Spotify API response `data` has 'playlist' type."""
+ref_repos/MusicBot-Python/musicbot/spotify.py:57:        return SpotifyObject.is_type(data, "playlist")
+ref_repos/MusicBot-Python/musicbot/spotify.py:61:        """Check if given Spotify API response `data` has 'album' type."""
+ref_repos/MusicBot-Python/musicbot/spotify.py:62:        return SpotifyObject.is_type(data, "album")
+ref_repos/MusicBot-Python/musicbot/spotify.py:71:        """Returns the Spotify ID of the object, as reported by the API data."""
+ref_repos/MusicBot-Python/musicbot/spotify.py:84:        """Returns the "Spotify URI" for this object if available."""
+ref_repos/MusicBot-Python/musicbot/spotify.py:105:            "extractor_key": "SpotifyMusicBot",
+ref_repos/MusicBot-Python/musicbot/spotify.py:109:class SpotifyTrack(SpotifyObject):
+ref_repos/MusicBot-Python/musicbot/spotify.py:116:        if not SpotifyObject.is_track_data(track_data):
+ref_repos/MusicBot-Python/musicbot/spotify.py:117:            raise SpotifyError(
+ref_repos/MusicBot-Python/musicbot/spotify.py:189:class SpotifyAlbum(SpotifyObject):
+ref_repos/MusicBot-Python/musicbot/spotify.py:195:        if not SpotifyObject.is_album_data(album_data):
+ref_repos/MusicBot-Python/musicbot/spotify.py:198:        self._track_objects: List[SpotifyTrack] = []
+ref_repos/MusicBot-Python/musicbot/spotify.py:204:        Method used to massage Spotify API data into individual
+ref_repos/MusicBot-Python/musicbot/spotify.py:205:        SpotifyTrack objects, or throw a fit if it fails.
+ref_repos/MusicBot-Python/musicbot/spotify.py:220:            self._track_objects.append(SpotifyTrack(item))
+ref_repos/MusicBot-Python/musicbot/spotify.py:223:    def track_objects(self) -> List[SpotifyTrack]:
+ref_repos/MusicBot-Python/musicbot/spotify.py:224:        """List of SpotifyTrack objects loaded with the playlist API data."""
+ref_repos/MusicBot-Python/musicbot/spotify.py:261:class SpotifyPlaylist(SpotifyObject):
+ref_repos/MusicBot-Python/musicbot/spotify.py:267:        if not SpotifyObject.is_playlist_data(playlist_data):
+ref_repos/MusicBot-Python/musicbot/spotify.py:270:        self._track_objects: List[SpotifyTrack] = []
+ref_repos/MusicBot-Python/musicbot/spotify.py:276:        Method used to massage Spotify API data into individual
+ref_repos/MusicBot-Python/musicbot/spotify.py:277:        SpotifyTrack objects, or throw a fit if it fails.
+ref_repos/MusicBot-Python/musicbot/spotify.py:296:                self._track_objects.append(SpotifyTrack(track_data))
+ref_repos/MusicBot-Python/musicbot/spotify.py:304:    def track_objects(self) -> List[SpotifyTrack]:
+ref_repos/MusicBot-Python/musicbot/spotify.py:305:        """List of SpotifyTrack objects loaded with the playlist API data."""
+ref_repos/MusicBot-Python/musicbot/spotify.py:347:class Spotify:
+ref_repos/MusicBot-Python/musicbot/spotify.py:362:        Manage data and state for this Spotify API session.
+ref_repos/MusicBot-Python/musicbot/spotify.py:386:        return Spotify.URL_REGEX.sub("spotify:", url).replace("/", ":")
+ref_repos/MusicBot-Python/musicbot/spotify.py:395:        uri = Spotify.url_to_uri(url)
+ref_repos/MusicBot-Python/musicbot/spotify.py:403:        Check if the given `url` is a supported Spotify URL.
+ref_repos/MusicBot-Python/musicbot/spotify.py:405:        parts = Spotify.url_to_parts(url)
+ref_repos/MusicBot-Python/musicbot/spotify.py:418:        Makes Spotify API URLs in response date "safe" for use in this API.
+ref_repos/MusicBot-Python/musicbot/spotify.py:423:        This prevents data in a Spotify response from sending our API to
+ref_repos/MusicBot-Python/musicbot/spotify.py:439:        data: SpotifyObject
+ref_repos/MusicBot-Python/musicbot/spotify.py:440:        parts = Spotify.url_to_parts(spotify_url)
+ref_repos/MusicBot-Python/musicbot/spotify.py:468:    async def get_track_object(self, track_id: str) -> SpotifyTrack:
+ref_repos/MusicBot-Python/musicbot/spotify.py:469:        """Lookup a spotify track by its ID and return a SpotifyTrack object"""
+ref_repos/MusicBot-Python/musicbot/spotify.py:471:        return SpotifyTrack(data)
+ref_repos/MusicBot-Python/musicbot/spotify.py:474:        """Get a track's info from its Spotify ID"""
+ref_repos/MusicBot-Python/musicbot/spotify.py:477:    async def get_album_object_complete(self, album_id: str) -> SpotifyAlbum:
+ref_repos/MusicBot-Python/musicbot/spotify.py:478:        """Fetch a playlist and all its tracks from Spotify API, returned as a SpotifyAlbum object."""
+ref_repos/MusicBot-Python/musicbot/spotify.py:484:        log.debug("Spotify Album total tacks: %s --  %s", total_tracks, next_url)
+ref_repos/MusicBot-Python/musicbot/spotify.py:498:                "Spotify Album Object may not be complete, expected %s tracks but got %s",
+ref_repos/MusicBot-Python/musicbot/spotify.py:503:            log.warning("Spotify Album has more tracks than initial total.")
+ref_repos/MusicBot-Python/musicbot/spotify.py:507:        return SpotifyAlbum(aldata)
+ref_repos/MusicBot-Python/musicbot/spotify.py:509:    async def get_album_object(self, album_id: str) -> SpotifyAlbum:
+ref_repos/MusicBot-Python/musicbot/spotify.py:510:        """Lookup a spotify playlist by its ID and return a SpotifyAlbum object"""
+ref_repos/MusicBot-Python/musicbot/spotify.py:512:        return SpotifyAlbum(data)
+ref_repos/MusicBot-Python/musicbot/spotify.py:515:        """Get an album's info from its Spotify ID"""
+ref_repos/MusicBot-Python/musicbot/spotify.py:518:    async def get_playlist_object_complete(self, list_id: str) -> SpotifyPlaylist:
+ref_repos/MusicBot-Python/musicbot/spotify.py:519:        """Fetch a playlist and all its tracks from Spotify API, returned as a SpotifyPlaylist object."""
+ref_repos/MusicBot-Python/musicbot/spotify.py:525:        log.debug("Spotify Playlist total tacks: %s  --  %s", total_tracks, next_url)
+ref_repos/MusicBot-Python/musicbot/spotify.py:539:                "Spotify Playlist Object may not be complete, expected %s tracks but got %s",
+ref_repos/MusicBot-Python/musicbot/spotify.py:544:            log.warning("Spotify Playlist has more tracks than initial total.")
+ref_repos/MusicBot-Python/musicbot/spotify.py:548:        plobj = SpotifyPlaylist(pldata)
+ref_repos/MusicBot-Python/musicbot/spotify.py:549:        log.debug("Spotify Playlist contained %s usable tracks.", plobj.tracks_loaded)
+ref_repos/MusicBot-Python/musicbot/spotify.py:552:    async def get_playlist_object(self, list_id: str) -> SpotifyPlaylist:
+ref_repos/MusicBot-Python/musicbot/spotify.py:553:        """Lookup a spotify playlist by its ID and return a SpotifyPlaylist object"""
+ref_repos/MusicBot-Python/musicbot/spotify.py:555:        return SpotifyPlaylist(data)
+ref_repos/MusicBot-Python/musicbot/spotify.py:558:        """Get a playlist's info from its Spotify ID"""
+ref_repos/MusicBot-Python/musicbot/spotify.py:562:        """Proxy method for making a Spotify request using the correct Auth headers"""
+ref_repos/MusicBot-Python/musicbot/spotify.py:574:                    raise SpotifyError(
+ref_repos/MusicBot-Python/musicbot/spotify.py:577:                # log.everything("Spotify API GET:  %s\nData:  %s", url, await r.text() )
+ref_repos/MusicBot-Python/musicbot/spotify.py:580:                    raise SpotifyError("Response JSON did not decode to a dict!")
+ref_repos/MusicBot-Python/musicbot/spotify.py:587:            SpotifyError,
+ref_repos/MusicBot-Python/musicbot/spotify.py:590:            raise SpotifyError(
+ref_repos/MusicBot-Python/musicbot/spotify.py:604:                    raise SpotifyError(
+ref_repos/MusicBot-Python/musicbot/spotify.py:610:                    raise SpotifyError("Response JSON did not decode to a dict!")
+ref_repos/MusicBot-Python/musicbot/spotify.py:617:            SpotifyError,
+ref_repos/MusicBot-Python/musicbot/spotify.py:620:            raise SpotifyError(
+ref_repos/MusicBot-Python/musicbot/spotify.py:653:                raise SpotifyError(
+ref_repos/MusicBot-Python/musicbot/spotify.py:654:                    "Failed to get a guest token from Spotify, please try specifying client id and client secret"
+ref_repos/MusicBot-Python/musicbot/spotify.py:664:                raise SpotifyError(
+ref_repos/MusicBot-Python/musicbot/spotify.py:669:                raise SpotifyError(
+ref_repos/MusicBot-Python/musicbot/spotify.py:675:                raise SpotifyError(
+ref_repos/MusicBot-Python/musicbot/spotify.py:676:                    "Requested a token from Spotify, did not end up getting one"
+ref_repos/MusicBot-Python/musicbot/spotify.py:684:        """Obtains a token from Spotify and returns it"""
+ref_repos/MusicBot-Python/musicbot/spotify.py:700:        """Obtains a web player token from Spotify and returns it"""
+ref_repos/MusicBot-Python/musicbot/spotify.py:706:                    raise SpotifyError(
+ref_repos/MusicBot-Python/musicbot/spotify.py:712:                    raise SpotifyError("Response JSON did not decode to a dict!")
+ref_repos/MusicBot-Python/musicbot/spotify.py:719:            SpotifyError,
+ref_repos/MusicBot-Python/musicbot/spotify.py:722:                log.exception("Failed to get Spotify Guest Token.")
+ref_repos/MusicBot-Python/musicbot/filecache.py:24:    This class provides methods to manage the audio file cache and get info about it.
+ref_repos/MusicBot-Python/musicbot/filecache.py:29:        Manage data related to the audio cache, such as its current size,
+ref_repos/MusicBot-Python/musicbot/filecache.py:34:        self.cache_path: pathlib.Path = bot.config.audio_cache_path
+ref_repos/MusicBot-Python/musicbot/filecache.py:35:        self.cachemap_file = pathlib.Path(DEFAULT_DATA_DIR).joinpath(DATA_FILE_CACHEMAP)
+ref_repos/MusicBot-Python/musicbot/filecache.py:41:        self.auto_playlist_cachemap: Dict[str, str] = {}
+ref_repos/MusicBot-Python/musicbot/filecache.py:42:        self.cachemap_file_lock: asyncio.Lock = asyncio.Lock()
+ref_repos/MusicBot-Python/musicbot/filecache.py:45:            self.load_autoplay_cachemap()
+ref_repos/MusicBot-Python/musicbot/filecache.py:49:        """Get the configured cache path as a pathlib.Path"""
+ref_repos/MusicBot-Python/musicbot/filecache.py:50:        return self.cache_path
+ref_repos/MusicBot-Python/musicbot/filecache.py:52:    def get_if_cached(self, filename: str, ignore_ext: bool = True) -> str:
+ref_repos/MusicBot-Python/musicbot/filecache.py:54:        Check for an existing cache file by the given name, and return the matched path.
+ref_repos/MusicBot-Python/musicbot/filecache.py:55:        The `filename` will be reduced to its basename and joined with the current cache_path.
+ref_repos/MusicBot-Python/musicbot/filecache.py:63:        cache_file_path = self.cache_path.with_name(filename)
+ref_repos/MusicBot-Python/musicbot/filecache.py:66:            if cache_file_path.is_file():
+ref_repos/MusicBot-Python/musicbot/filecache.py:67:                return str(cache_file_path)
+ref_repos/MusicBot-Python/musicbot/filecache.py:70:            for item in self.cache_path.glob(f"{safe_stem}.*"):
+ref_repos/MusicBot-Python/musicbot/filecache.py:74:        elif cache_file_path.is_file():
+ref_repos/MusicBot-Python/musicbot/filecache.py:79:    def ensure_cache_dir_exists(self) -> None:
+ref_repos/MusicBot-Python/musicbot/filecache.py:80:        """Check for and create the cache directory path or raise an error"""
+ref_repos/MusicBot-Python/musicbot/filecache.py:81:        if not self.cache_dir_exists():
+ref_repos/MusicBot-Python/musicbot/filecache.py:82:            self.cache_path.mkdir(parents=True)
+ref_repos/MusicBot-Python/musicbot/filecache.py:84:    def cache_dir_exists(self) -> bool:
+ref_repos/MusicBot-Python/musicbot/filecache.py:85:        """Wrapper for self.cache.is_dir() for external use."""
+ref_repos/MusicBot-Python/musicbot/filecache.py:86:        return self.cache_path.is_dir()
+ref_repos/MusicBot-Python/musicbot/filecache.py:88:    def get_cache_size(self) -> Tuple[int, int]:
+ref_repos/MusicBot-Python/musicbot/filecache.py:94:    def scan_audio_cache(self) -> Tuple[int, int]:
+ref_repos/MusicBot-Python/musicbot/filecache.py:96:        Scan the audio cache directory and return a tuple with info.
+ref_repos/MusicBot-Python/musicbot/filecache.py:99:        cached_bytes = 0
+ref_repos/MusicBot-Python/musicbot/filecache.py:100:        cached_files = 0
+ref_repos/MusicBot-Python/musicbot/filecache.py:101:        if os.path.isdir(self.cache_path):
+ref_repos/MusicBot-Python/musicbot/filecache.py:102:            for cache_file in pathlib.Path(self.cache_path).iterdir():
+ref_repos/MusicBot-Python/musicbot/filecache.py:103:                cached_files += 1
+ref_repos/MusicBot-Python/musicbot/filecache.py:104:                cached_bytes += os.path.getsize(cache_file)
+ref_repos/MusicBot-Python/musicbot/filecache.py:105:        self.size_bytes = cached_bytes
+ref_repos/MusicBot-Python/musicbot/filecache.py:106:        self.file_count = cached_files
+ref_repos/MusicBot-Python/musicbot/filecache.py:108:        return self.get_cache_size()
+ref_repos/MusicBot-Python/musicbot/filecache.py:110:    def _delete_cache_file(self, path: pathlib.Path) -> bool:
+ref_repos/MusicBot-Python/musicbot/filecache.py:118:            log.warning("Failed to delete cache file:  %s", path, exc_info=True)
+ref_repos/MusicBot-Python/musicbot/filecache.py:121:    def _delete_cache_dir(self) -> bool:
+ref_repos/MusicBot-Python/musicbot/filecache.py:123:        Attempts immediate removal of the cache file directory while logging errors.
+ref_repos/MusicBot-Python/musicbot/filecache.py:126:            shutil.rmtree(self.cache_path)
+ref_repos/MusicBot-Python/musicbot/filecache.py:129:            log.debug("Audio cache directory has been removed.")
+ref_repos/MusicBot-Python/musicbot/filecache.py:132:            new_name = self.cache_path.parent.joinpath(self.cache_path.stem + "__")
+ref_repos/MusicBot-Python/musicbot/filecache.py:134:                new_path = self.cache_path.rename(new_name)
+ref_repos/MusicBot-Python/musicbot/filecache.py:136:                log.debug("Audio cache directory could not be removed or renamed.")
+ref_repos/MusicBot-Python/musicbot/filecache.py:142:                new_path.rename(self.cache_path)
+ref_repos/MusicBot-Python/musicbot/filecache.py:143:                log.debug("Audio cache directory could not be removed.")
+ref_repos/MusicBot-Python/musicbot/filecache.py:146:    def _process_cache_delete(self) -> bool:
+ref_repos/MusicBot-Python/musicbot/filecache.py:148:        Sorts cache by access or creation time and deletes any that are older than set limits.
+ref_repos/MusicBot-Python/musicbot/filecache.py:149:        Will retain cached autoplaylist if enabled and files are in the cachemap.
+ref_repos/MusicBot-Python/musicbot/filecache.py:152:            log.debug("Audio cache has no limits set, nothing to delete.")
+ref_repos/MusicBot-Python/musicbot/filecache.py:159:            cached_files = sorted(
+ref_repos/MusicBot-Python/musicbot/filecache.py:160:                self.cache_path.iterdir(),
+ref_repos/MusicBot-Python/musicbot/filecache.py:165:            cached_files = sorted(
+ref_repos/MusicBot-Python/musicbot/filecache.py:166:                self.cache_path.iterdir(),
+ref_repos/MusicBot-Python/musicbot/filecache.py:172:        cached_size = 0
+ref_repos/MusicBot-Python/musicbot/filecache.py:178:        for cache_file in cached_files:
+ref_repos/MusicBot-Python/musicbot/filecache.py:179:            file_size = os.path.getsize(cache_file)
+ref_repos/MusicBot-Python/musicbot/filecache.py:181:            # Do not purge files from autoplaylist if retention is enabled.
+ref_repos/MusicBot-Python/musicbot/filecache.py:182:            if self._check_autoplay_cachemap(cache_file):
+ref_repos/MusicBot-Python/musicbot/filecache.py:185:                cached_size += file_size
+ref_repos/MusicBot-Python/musicbot/filecache.py:190:                file_time = os.path.getctime(cache_file)
+ref_repos/MusicBot-Python/musicbot/filecache.py:192:                file_time = os.path.getatime(cache_file)
+ref_repos/MusicBot-Python/musicbot/filecache.py:197:                and self.config.storage_limit_bytes < cached_size
+ref_repos/MusicBot-Python/musicbot/filecache.py:199:                self._delete_cache_file(cache_file)
+ref_repos/MusicBot-Python/musicbot/filecache.py:206:                    self._delete_cache_file(cache_file)
+ref_repos/MusicBot-Python/musicbot/filecache.py:211:            cached_size += file_size
+ref_repos/MusicBot-Python/musicbot/filecache.py:215:                "Audio cache deleted %s file(s), total of %s removed.",
+ref_repos/MusicBot-Python/musicbot/filecache.py:221:                "Audio cached retained %s file(s) from autoplaylist, total of %s retained.",
+ref_repos/MusicBot-Python/musicbot/filecache.py:225:        self.file_count = len(cached_files) - removed_count
+ref_repos/MusicBot-Python/musicbot/filecache.py:226:        self.size_bytes = cached_size
+ref_repos/MusicBot-Python/musicbot/filecache.py:228:            "Audio cache is now %s over %s file(s).",
+ref_repos/MusicBot-Python/musicbot/filecache.py:234:    def delete_old_audiocache(self, remove_dir: bool = False) -> bool:
+ref_repos/MusicBot-Python/musicbot/filecache.py:236:        Handle deletion of cache data according to settings and return bool status.
+ref_repos/MusicBot-Python/musicbot/filecache.py:237:        Will return False if no cache directory exists, and error prevented deletion.
+ref_repos/MusicBot-Python/musicbot/filecache.py:241:        if not os.path.isdir(self.cache_path):
+ref_repos/MusicBot-Python/musicbot/filecache.py:242:            log.debug("Audio cache directory is missing, nothing to delete.")
+ref_repos/MusicBot-Python/musicbot/filecache.py:246:            return self._process_cache_delete()
+ref_repos/MusicBot-Python/musicbot/filecache.py:249:            return self._delete_cache_dir()
+ref_repos/MusicBot-Python/musicbot/filecache.py:253:    def handle_new_cache_entry(self, entry: "URLPlaylistEntry") -> None:
+ref_repos/MusicBot-Python/musicbot/filecache.py:255:        Test given entry for cachemap inclusion and run cache limit checks.
+ref_repos/MusicBot-Python/musicbot/filecache.py:259:            if entry.cache_busted:
+ref_repos/MusicBot-Python/musicbot/filecache.py:261:                    "Audio cache file is from autoplaylist but marked as busted, ignoring it."
+ref_repos/MusicBot-Python/musicbot/filecache.py:264:                self.add_autoplay_cachemap_entry(entry)
+ref_repos/MusicBot-Python/musicbot/filecache.py:275:                    self.delete_old_audiocache()
+ref_repos/MusicBot-Python/musicbot/filecache.py:278:                self.delete_old_audiocache()
+ref_repos/MusicBot-Python/musicbot/filecache.py:280:    def load_autoplay_cachemap(self) -> None:
+ref_repos/MusicBot-Python/musicbot/filecache.py:282:        Load cachemap json file if it exists and settings are enabled.
+ref_repos/MusicBot-Python/musicbot/filecache.py:284:        The cache map is a dict with filename keys for playlist url values.
+ref_repos/MusicBot-Python/musicbot/filecache.py:288:            not self.config.storage_retain_autoplay
+ref_repos/MusicBot-Python/musicbot/filecache.py:292:            self.auto_playlist_cachemap = {}
+ref_repos/MusicBot-Python/musicbot/filecache.py:295:        if not self.cachemap_file.is_file():
+ref_repos/MusicBot-Python/musicbot/filecache.py:296:            log.debug("Autoplaylist has no cache map, moving on.")
+ref_repos/MusicBot-Python/musicbot/filecache.py:297:            self.auto_playlist_cachemap = {}
+ref_repos/MusicBot-Python/musicbot/filecache.py:300:        with open(self.cachemap_file, "r", encoding="utf8") as fh:
+ref_repos/MusicBot-Python/musicbot/filecache.py:302:                self.auto_playlist_cachemap = json.load(fh)
+ref_repos/MusicBot-Python/musicbot/filecache.py:304:                    "Loaded autoplaylist cache map with %s entries.",
+ref_repos/MusicBot-Python/musicbot/filecache.py:305:                    len(self.auto_playlist_cachemap),
+ref_repos/MusicBot-Python/musicbot/filecache.py:308:                log.exception("Failed to load autoplaylist cache map.")
+ref_repos/MusicBot-Python/musicbot/filecache.py:309:                self.auto_playlist_cachemap = {}
+ref_repos/MusicBot-Python/musicbot/filecache.py:311:    async def save_autoplay_cachemap(self) -> None:
+ref_repos/MusicBot-Python/musicbot/filecache.py:313:        Uses asyncio.Lock to save cachemap as a json file, if settings are enabled.
+ref_repos/MusicBot-Python/musicbot/filecache.py:316:            not self.config.storage_retain_autoplay
+ref_repos/MusicBot-Python/musicbot/filecache.py:322:        async with self.cachemap_file_lock:
+ref_repos/MusicBot-Python/musicbot/filecache.py:324:                with open(self.cachemap_file, "w", encoding="utf8") as fh:
+ref_repos/MusicBot-Python/musicbot/filecache.py:325:                    json.dump(self.auto_playlist_cachemap, fh)
+ref_repos/MusicBot-Python/musicbot/filecache.py:327:                        "Saved autoplaylist cache map with %s entries.",
+ref_repos/MusicBot-Python/musicbot/filecache.py:328:                        len(self.auto_playlist_cachemap),
+ref_repos/MusicBot-Python/musicbot/filecache.py:331:                log.exception("Failed to save autoplaylist cache map.")
+ref_repos/MusicBot-Python/musicbot/filecache.py:333:    def add_autoplay_cachemap_entry(self, entry: "BasePlaylistEntry") -> None:
+ref_repos/MusicBot-Python/musicbot/filecache.py:335:        Store an entry in autoplaylist cachemap, and update the cachemap file if needed.
+ref_repos/MusicBot-Python/musicbot/filecache.py:338:            not self.config.storage_retain_autoplay
+ref_repos/MusicBot-Python/musicbot/filecache.py:346:        if filename in self.auto_playlist_cachemap:
+ref_repos/MusicBot-Python/musicbot/filecache.py:347:            if self.auto_playlist_cachemap[filename] != entry.url:
+ref_repos/MusicBot-Python/musicbot/filecache.py:349:                    "Autoplaylist cache map conflict on Key: %s  Old: %s  New: %s",
+ref_repos/MusicBot-Python/musicbot/filecache.py:351:                    self.auto_playlist_cachemap[filename],
+ref_repos/MusicBot-Python/musicbot/filecache.py:354:                self.auto_playlist_cachemap[filename] = entry.url
+ref_repos/MusicBot-Python/musicbot/filecache.py:357:            self.auto_playlist_cachemap[filename] = entry.url
+ref_repos/MusicBot-Python/musicbot/filecache.py:362:                self.save_autoplay_cachemap(), name="MB_SaveAutoPlayCachemap"
+ref_repos/MusicBot-Python/musicbot/filecache.py:365:    def remove_autoplay_cachemap_entry(self, entry: "BasePlaylistEntry") -> None:
+ref_repos/MusicBot-Python/musicbot/filecache.py:367:        Remove an entry from cachemap and update cachemap file if needed.
+ref_repos/MusicBot-Python/musicbot/filecache.py:370:            not self.config.storage_retain_autoplay
+ref_repos/MusicBot-Python/musicbot/filecache.py:377:        if filename in self.auto_playlist_cachemap:
+ref_repos/MusicBot-Python/musicbot/filecache.py:378:            del self.auto_playlist_cachemap[filename]
+ref_repos/MusicBot-Python/musicbot/filecache.py:380:                self.save_autoplay_cachemap(), name="MB_SaveAutoPlayCachemap"
+ref_repos/MusicBot-Python/musicbot/filecache.py:383:    def remove_autoplay_cachemap_entry_by_url(self, url: str) -> None:
+ref_repos/MusicBot-Python/musicbot/filecache.py:385:        Remove all entries having the given URL from cachemap and update cachemap if needed.
+ref_repos/MusicBot-Python/musicbot/filecache.py:388:            not self.config.storage_retain_autoplay
+ref_repos/MusicBot-Python/musicbot/filecache.py:395:        for map_key, map_url in self.auto_playlist_cachemap.items():
+ref_repos/MusicBot-Python/musicbot/filecache.py:400:            del self.auto_playlist_cachemap[key]
+ref_repos/MusicBot-Python/musicbot/filecache.py:404:                self.save_autoplay_cachemap(), name="MB_SaveAutoPlayCachemap"
+ref_repos/MusicBot-Python/musicbot/filecache.py:407:    def _check_autoplay_cachemap(self, filename: pathlib.Path) -> bool:
+ref_repos/MusicBot-Python/musicbot/filecache.py:409:        Test if filename is a valid autoplaylist file still.
+ref_repos/MusicBot-Python/musicbot/filecache.py:410:        Returns True if map entry URL is still in autoplaylist.
+ref_repos/MusicBot-Python/musicbot/filecache.py:411:        If settings are disabled for cache retention this will also return false.
+ref_repos/MusicBot-Python/musicbot/filecache.py:414:            not self.config.storage_retain_autoplay
+ref_repos/MusicBot-Python/musicbot/filecache.py:420:        if filename.stem in self.auto_playlist_cachemap:
+ref_repos/MusicBot-Python/musicbot/filecache.py:421:            cached_url = self.auto_playlist_cachemap[filename.stem]
+ref_repos/MusicBot-Python/musicbot/filecache.py:422:            if cached_url in self.bot.playlist_mgr.loaded_tracks:
+=== JAVA source tree ===
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/Bot.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/BotConfig.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/JMusicBot.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/Listener.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/audio/AloneInVoiceHandler.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/audio/AudioHandler.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/audio/NowplayingHandler.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/audio/PlayerManager.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/audio/QueuedTrack.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/audio/RequestMetadata.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/audio/TransformativeAudioSourceManager.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/AdminCommand.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/DJCommand.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/MusicCommand.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/OwnerCommand.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/admin/PrefixCmd.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/admin/QueueTypeCmd.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/admin/SetdjCmd.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/admin/SettcCmd.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/admin/SetvcCmd.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/admin/SkipratioCmd.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/dj/ForceRemoveCmd.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/dj/ForceskipCmd.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/dj/MoveTrackCmd.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/dj/PauseCmd.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/dj/PlaynextCmd.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/dj/RepeatCmd.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/dj/SkiptoCmd.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/dj/StopCmd.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/dj/VolumeCmd.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/general/SettingsCmd.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/music/LyricsCmd.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/music/NowplayingCmd.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/music/PlayCmd.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/music/PlaylistsCmd.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/music/QueueCmd.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/music/RemoveCmd.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/music/SCSearchCmd.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/music/SearchCmd.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/music/SeekCmd.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/music/ShuffleCmd.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/music/SkipCmd.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/AutoplaylistCmd.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/DebugCmd.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/EvalCmd.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/PlaylistCmd.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/SetavatarCmd.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/SetgameCmd.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/SetnameCmd.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/SetstatusCmd.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/ShutdownCmd.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/entities/Pair.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/entities/Prompt.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/gui/ConsolePanel.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/gui/GUI.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/gui/TextAreaOutputStream.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/playlist/PlaylistLoader.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/queue/AbstractQueue.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/queue/FairQueue.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/queue/LinearQueue.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/queue/QueueSupplier.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/queue/Queueable.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/settings/QueueType.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/settings/RepeatMode.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/settings/Settings.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/settings/SettingsManager.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/utils/FormatUtil.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/utils/OtherUtil.java
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/utils/TimeUtil.java
+ref_repos/MusicBot-Java/src/main/resources/logback.xml
+ref_repos/MusicBot-Java/src/main/resources/natives/linux-aarch32/libconnector.so
+ref_repos/MusicBot-Java/src/main/resources/natives/linux-aarch64/libconnector.so
+ref_repos/MusicBot-Java/src/main/resources/natives/linux-arm/libconnector.so
+ref_repos/MusicBot-Java/src/main/resources/natives/linux-armhf/libconnector.so
+ref_repos/MusicBot-Java/src/main/resources/natives/linux-x86/libconnector.so
+ref_repos/MusicBot-Java/src/main/resources/reference.conf
+ref_repos/MusicBot-Java/src/test/java/com/jagrosh/jmusicbot/FairQueueTest.java
+ref_repos/MusicBot-Java/src/test/java/com/jagrosh/jmusicbot/TimeUtilTest.java
+=== JAVA feature symbols ===
+ref_repos/MusicBot-Java/pom.xml:84:            <artifactId>config</artifactId>
+ref_repos/MusicBot-Java/pom.xml:120:                    <configuration>
+ref_repos/MusicBot-Java/pom.xml:143:                    </configuration>
+ref_repos/MusicBot-Java/src/test/java/com/jagrosh/jmusicbot/FairQueueTest.java:18:import com.jagrosh.jmusicbot.queue.FairQueue;
+ref_repos/MusicBot-Java/src/test/java/com/jagrosh/jmusicbot/FairQueueTest.java:19:import com.jagrosh.jmusicbot.queue.Queueable;
+ref_repos/MusicBot-Java/src/test/java/com/jagrosh/jmusicbot/FairQueueTest.java:27:public class FairQueueTest
+ref_repos/MusicBot-Java/src/test/java/com/jagrosh/jmusicbot/FairQueueTest.java:32:        FairQueue<Q> queue = new FairQueue<>(null);
+ref_repos/MusicBot-Java/src/test/java/com/jagrosh/jmusicbot/FairQueueTest.java:42:        FairQueue<Q> queue = new FairQueue<>(null);
+ref_repos/MusicBot-Java/src/test/java/com/jagrosh/jmusicbot/FairQueueTest.java:49:    private class Q implements Queueable
+ref_repos/MusicBot-Java/src/main/resources/reference.conf:52:// "Playing" status. Note that this will ONLY work if the bot is playing music on ONE guild;
+ref_repos/MusicBot-Java/src/main/resources/reference.conf:53:// if the bot is playing on multiple guilds, this will not work.
+ref_repos/MusicBot-Java/src/main/resources/reference.conf:88:// If you set this, the bot will not leave a voice channel after it finishes a queue.
+ref_repos/MusicBot-Java/src/main/resources/reference.conf:89:// Keep in mind that being connected to a voice channel uses additional bandwith,
+ref_repos/MusicBot-Java/src/main/resources/reference.conf:111:// This sets the ratio of users that must vote to skip the currently playing song.
+ref_repos/MusicBot-Java/src/main/resources/reference.conf:112:// Guild owners can define their own skip ratios, but this will be used if a guild
+ref_repos/MusicBot-Java/src/main/resources/reference.conf:113:// has not defined their own skip ratio.
+ref_repos/MusicBot-Java/src/main/resources/reference.conf:115:skipratio = 0.55
+ref_repos/MusicBot-Java/src/main/resources/reference.conf:118:// This sets the amount of seconds the bot will stay alone on a voice channel until it
+ref_repos/MusicBot-Java/src/main/resources/reference.conf:119:// automatically leaves the voice channel and clears the queue. If not set or set
+ref_repos/MusicBot-Java/src/main/resources/reference.conf:125:// This sets an alternative folder to be used as the Playlists folder
+ref_repos/MusicBot-Java/src/main/resources/reference.conf:128:playlistsfolder = "Playlists"
+ref_repos/MusicBot-Java/src/main/resources/reference.conf:148:// These settings allow you to configure custom aliases for all commands.
+ref_repos/MusicBot-Java/src/main/resources/reference.conf:170:  shuffle = []
+ref_repos/MusicBot-Java/src/main/resources/reference.conf:171:  skip = [ voteskip ]
+ref_repos/MusicBot-Java/src/main/resources/reference.conf:176:  setskip = [ setskippercent, skippercent, setskipratio ]
+ref_repos/MusicBot-Java/src/main/resources/reference.conf:182:  forceskip = [ modskip ]
+ref_repos/MusicBot-Java/src/main/resources/reference.conf:184:  pause = []
+ref_repos/MusicBot-Java/src/main/resources/reference.conf:187:  repeat = []
+ref_repos/MusicBot-Java/src/main/resources/reference.conf:188:  skipto = [ jumpto ]
+ref_repos/MusicBot-Java/src/main/resources/reference.conf:190:  volume = [ vol ]
+ref_repos/MusicBot-Java/src/main/resources/logback.xml:2:<configuration>
+ref_repos/MusicBot-Java/src/main/resources/logback.xml:17:</configuration>
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/BotConfig.java:22:import com.typesafe.config.*;
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/BotConfig.java:47:    private int maxYTPlaylistPages;
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/BotConfig.java:48:    private double skipratio;
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/BotConfig.java:64:        // read config from file
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/BotConfig.java:67:            // get the path to the config, default config.txt
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/BotConfig.java:70:            // load in the config file, plus the default values
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/BotConfig.java:71:            //Config config = ConfigFactory.parseFile(path.toFile()).withFallback(ConfigFactory.load());
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/BotConfig.java:72:            Config config = ConfigFactory.load();
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/BotConfig.java:75:            token = config.getString("token");
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/BotConfig.java:76:            prefix = config.getString("prefix");
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/BotConfig.java:77:            altprefix = config.getString("altprefix");
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/BotConfig.java:78:            helpWord = config.getString("help");
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/BotConfig.java:79:            owner = config.getLong("owner");
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/BotConfig.java:80:            successEmoji = config.getString("success");
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/BotConfig.java:81:            warningEmoji = config.getString("warning");
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/BotConfig.java:82:            errorEmoji = config.getString("error");
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/BotConfig.java:83:            loadingEmoji = config.getString("loading");
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/BotConfig.java:84:            searchingEmoji = config.getString("searching");
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/BotConfig.java:85:            game = OtherUtil.parseGame(config.getString("game"));
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/BotConfig.java:86:            status = OtherUtil.parseStatus(config.getString("status"));
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/BotConfig.java:87:            stayInChannel = config.getBoolean("stayinchannel");
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/BotConfig.java:88:            songInGame = config.getBoolean("songinstatus");
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/BotConfig.java:89:            npImages = config.getBoolean("npimages");
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/BotConfig.java:90:            updatealerts = config.getBoolean("updatealerts");
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/BotConfig.java:91:            logLevel = config.getString("loglevel");
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/BotConfig.java:92:            useEval = config.getBoolean("eval");
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/BotConfig.java:93:            evalEngine = config.getString("evalengine");
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/BotConfig.java:94:            maxSeconds = config.getLong("maxtime");
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/BotConfig.java:95:            maxYTPlaylistPages = config.getInt("maxytplaylistpages");
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/BotConfig.java:96:            aloneTimeUntilStop = config.getLong("alonetimeuntilstop");
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/BotConfig.java:97:            playlistsFolder = config.getString("playlistsfolder");
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/BotConfig.java:98:            aliases = config.getConfig("aliases");
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/BotConfig.java:99:            transforms = config.getConfig("transforms");
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/BotConfig.java:100:            skipratio = config.getDouble("skipratio");
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/BotConfig.java:103:            // we may need to write a new config file
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/BotConfig.java:153:            // if we get through the whole config, it's good to go
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/BotConfig.java:173:            prompt.alert(Prompt.Level.WARNING, CONTEXT, "Failed to write new config options to config.txt: "+ex
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/BotConfig.java:189:        Path path = OtherUtil.getPath(System.getProperty("config.file", System.getProperty("config", "config.txt")));
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/BotConfig.java:192:            if(System.getProperty("config.file") == null)
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/BotConfig.java:193:                System.setProperty("config.file", System.getProperty("config", path.toAbsolutePath().toString()));
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/BotConfig.java:202:        prompt.alert(Prompt.Level.INFO, "JMusicBot Config", "Generating default config file");
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/BotConfig.java:207:            prompt.alert(Prompt.Level.INFO, "JMusicBot Config", "Writing default config file to " + path.toAbsolutePath().toString());
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/BotConfig.java:212:            prompt.alert(Prompt.Level.ERROR, "JMusicBot Config", "An error occurred writing the default config file: " + ex.getMessage());
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/BotConfig.java:243:        return skipratio;
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/BotConfig.java:306:    public String getPlaylistsFolder()
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/BotConfig.java:346:    public int getMaxYTPlaylistPages()
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/BotConfig.java:348:        return maxYTPlaylistPages;
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/Bot.java:26:import com.jagrosh.jmusicbot.playlist.PlaylistLoader;
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/Bot.java:41:    private final BotConfig config;
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/Bot.java:44:    private final PlaylistLoader playlists;
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/Bot.java:52:    public Bot(EventWaiter waiter, BotConfig config, SettingsManager settings)
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/Bot.java:55:        this.config = config;
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/Bot.java:57:        this.playlists = new PlaylistLoader(config);
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/Bot.java:69:        return config;
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/Bot.java:92:    public PlaylistLoader getPlaylistLoader()
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/Bot.java:112:    public void closeAudioConnection(long guildId)
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/Bot.java:114:        Guild guild = jda.getGuildById(guildId);
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/Bot.java:115:        if(guild!=null)
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/Bot.java:116:            threadpool.submit(() -> guild.getAudioManager().closeAudioConnection());
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/Bot.java:121:        Activity game = config.getGame()==null || config.getGame().getName().equalsIgnoreCase("none") ? null : config.getGame();
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/Bot.java:136:                g.getAudioManager().closeAudioConnection();
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/Bot.java:137:                AudioHandler ah = (AudioHandler)g.getAudioManager().getSendingHandler();
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/MusicCommand.java:32:public abstract class MusicCommand extends Command 
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/MusicCommand.java:41:        this.guildOnly = true;
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/MusicCommand.java:60:        if(bePlaying && !((AudioHandler)event.getGuild().getAudioManager().getSendingHandler()).isMusicPlaying(event.getJDA()))
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/MusicCommand.java:73:                event.replyError("You must be listening in "+(current==null ? "a voice channel" : current.getAsMention())+" to use that!");
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/MusicCommand.java:88:                    event.getGuild().getAudioManager().openAudioConnection(userState.getChannel());
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/ShutdownCmd.java:26:public class ShutdownCmd extends OwnerCommand
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/ShutdownCmd.java:36:        this.guildOnly = false;
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/DJCommand.java:28:public abstract class DJCommand extends MusicCommand
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/SetstatusCmd.java:27:public class SetstatusCmd extends OwnerCommand
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/SetstatusCmd.java:35:        this.guildOnly = false;
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/AdminCommand.java:25:public abstract class AdminCommand extends Command
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/AdminCommand.java:37:        this.guildOnly = true;
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/SetnameCmd.java:27:public class SetnameCmd extends OwnerCommand
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/SetnameCmd.java:35:        this.guildOnly = false;
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/SetgameCmd.java:27:public class SetgameCmd extends OwnerCommand
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/SetgameCmd.java:35:        this.guildOnly = false;
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/SetgameCmd.java:59:    private class SetstreamCmd extends OwnerCommand
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/SetgameCmd.java:67:            this.guildOnly = false;
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/SetgameCmd.java:92:    private class SetlistenCmd extends OwnerCommand
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/SetgameCmd.java:100:            this.guildOnly = false;
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/SetgameCmd.java:122:    private class SetwatchCmd extends OwnerCommand
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/SetgameCmd.java:130:            this.guildOnly = false;
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/SetavatarCmd.java:30:public class SetavatarCmd extends OwnerCommand 
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/SetavatarCmd.java:38:        this.guildOnly = false;
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/AutoplaylistCmd.java:27:public class AutoplaylistCmd extends OwnerCommand
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/AutoplaylistCmd.java:34:        this.guildOnly = true;
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/AutoplaylistCmd.java:52:            settings.setDefaultPlaylist(null);
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/AutoplaylistCmd.java:57:        if(bot.getPlaylistLoader().getPlaylist(pname)==null)
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/AutoplaylistCmd.java:64:            settings.setDefaultPlaylist(pname);
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/audio/TransformativeAudioSourceManager.java:18:import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/audio/TransformativeAudioSourceManager.java:21:import com.typesafe.config.Config;
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/audio/TransformativeAudioSourceManager.java:63:    public AudioItem loadItem(AudioPlayerManager apm, AudioReference ar)
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/utils/FormatUtil.java:64:    public static String volumeIcon(int volume)
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/utils/FormatUtil.java:66:        if(volume == 0)
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/utils/FormatUtil.java:68:        if(volume < 30)
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/utils/FormatUtil.java:70:        if(volume < 70)
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/utils/FormatUtil.java:87:        String out = " Multiple voice channels found matching \""+query+"\":";
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/PlaylistCmd.java:24:import com.jagrosh.jmusicbot.playlist.PlaylistLoader.Playlist;
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/PlaylistCmd.java:30:public class PlaylistCmd extends OwnerCommand 
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/PlaylistCmd.java:33:    public PlaylistCmd(Bot bot)
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/PlaylistCmd.java:36:        this.guildOnly = false;
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/PlaylistCmd.java:53:        StringBuilder builder = new StringBuilder(event.getClient().getWarning()+" Playlist Management Commands:\n");
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/PlaylistCmd.java:60:    public class MakelistCmd extends OwnerCommand 
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/PlaylistCmd.java:68:            this.guildOnly = false;
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/PlaylistCmd.java:80:            else if(bot.getPlaylistLoader().getPlaylist(pname) == null)
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/PlaylistCmd.java:84:                    bot.getPlaylistLoader().createPlaylist(pname);
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/PlaylistCmd.java:93:                event.reply(event.getClient().getError()+" Playlist `"+pname+"` already exists!");
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/PlaylistCmd.java:97:    public class DeletelistCmd extends OwnerCommand 
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/PlaylistCmd.java:105:            this.guildOnly = false;
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/PlaylistCmd.java:112:            if(bot.getPlaylistLoader().getPlaylist(pname)==null)
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/PlaylistCmd.java:113:                event.reply(event.getClient().getError()+" Playlist `"+pname+"` doesn't exist!");
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/PlaylistCmd.java:118:                    bot.getPlaylistLoader().deletePlaylist(pname);
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/PlaylistCmd.java:129:    public class AppendlistCmd extends OwnerCommand 
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/PlaylistCmd.java:137:            this.guildOnly = false;
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/PlaylistCmd.java:150:            Playlist playlist = bot.getPlaylistLoader().getPlaylist(pname);
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/PlaylistCmd.java:152:                event.reply(event.getClient().getError()+" Playlist `"+pname+"` doesn't exist!");
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/PlaylistCmd.java:167:                    bot.getPlaylistLoader().writePlaylist(pname, builder.toString());
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/PlaylistCmd.java:186:            this.guildOnly = true;
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/PlaylistCmd.java:190:    public class ListCmd extends OwnerCommand 
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/PlaylistCmd.java:197:            this.guildOnly = true;
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/PlaylistCmd.java:203:            if(!bot.getPlaylistLoader().folderExists())
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/PlaylistCmd.java:204:                bot.getPlaylistLoader().createFolder();
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/PlaylistCmd.java:205:            if(!bot.getPlaylistLoader().folderExists())
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/PlaylistCmd.java:207:                event.reply(event.getClient().getWarning()+" Playlists folder does not exist and could not be created!");
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/PlaylistCmd.java:210:            List<String> list = bot.getPlaylistLoader().getPlaylistNames();
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/PlaylistCmd.java:214:                event.reply(event.getClient().getWarning()+" There are no playlists in the Playlists folder!");
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/audio/QueuedTrack.java:21:import com.jagrosh.jmusicbot.queue.Queueable;
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/audio/QueuedTrack.java:28:public class QueuedTrack implements Queueable
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/audio/QueuedTrack.java:33:    public QueuedTrack(AudioTrack track, RequestMetadata rm)
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/EvalCmd.java:29:public class EvalCmd extends OwnerCommand 
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/EvalCmd.java:41:        this.guildOnly = false;
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/EvalCmd.java:50:            event.replyError("The eval engine provided in the config (`"+engine+"`) doesn't exist. This could be due to an invalid "
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/EvalCmd.java:58:            se.put("guild", event.getGuild());
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/playlist/PlaylistLoader.java:21:import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/playlist/PlaylistLoader.java:23:import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/playlist/PlaylistLoader.java:36:public class PlaylistLoader
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/playlist/PlaylistLoader.java:38:    private final BotConfig config;
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/playlist/PlaylistLoader.java:40:    public PlaylistLoader(BotConfig config)
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/playlist/PlaylistLoader.java:42:        this.config = config;
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/playlist/PlaylistLoader.java:45:    public List<String> getPlaylistNames()
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/playlist/PlaylistLoader.java:49:            File folder = new File(OtherUtil.getPath(config.getPlaylistsFolder()).toString());
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/playlist/PlaylistLoader.java:64:            Files.createDirectory(OtherUtil.getPath(config.getPlaylistsFolder()));
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/playlist/PlaylistLoader.java:71:        return Files.exists(OtherUtil.getPath(config.getPlaylistsFolder()));
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/playlist/PlaylistLoader.java:74:    public void createPlaylist(String name) throws IOException
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/playlist/PlaylistLoader.java:76:        Files.createFile(OtherUtil.getPath(config.getPlaylistsFolder()+File.separator+name+".txt"));
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/playlist/PlaylistLoader.java:79:    public void deletePlaylist(String name) throws IOException
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/playlist/PlaylistLoader.java:81:        Files.delete(OtherUtil.getPath(config.getPlaylistsFolder()+File.separator+name+".txt"));
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/playlist/PlaylistLoader.java:84:    public void writePlaylist(String name, String text) throws IOException
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/playlist/PlaylistLoader.java:86:        Files.write(OtherUtil.getPath(config.getPlaylistsFolder()+File.separator+name+".txt"), text.trim().getBytes());
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/playlist/PlaylistLoader.java:89:    public Playlist getPlaylist(String name)
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/playlist/PlaylistLoader.java:91:        if(!getPlaylistNames().contains(name))
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/playlist/PlaylistLoader.java:97:                boolean[] shuffle = {false};
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/playlist/PlaylistLoader.java:99:                Files.readAllLines(OtherUtil.getPath(config.getPlaylistsFolder()+File.separator+name+".txt")).forEach(str -> 
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/playlist/PlaylistLoader.java:107:                        if(s.equalsIgnoreCase("#shuffle") || s.equalsIgnoreCase("//shuffle"))
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/playlist/PlaylistLoader.java:108:                            shuffle[0]=true;
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/playlist/PlaylistLoader.java:113:                if(shuffle[0])
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/playlist/PlaylistLoader.java:114:                    shuffle(list);
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/playlist/PlaylistLoader.java:115:                return new Playlist(name, list, shuffle[0]);
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/playlist/PlaylistLoader.java:130:    private static <T> void shuffle(List<T> list)
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/playlist/PlaylistLoader.java:142:    public class Playlist
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/playlist/PlaylistLoader.java:146:        private final boolean shuffle;
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/playlist/PlaylistLoader.java:148:        private final List<PlaylistLoadError> errors = new LinkedList<>();
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/playlist/PlaylistLoader.java:151:        private Playlist(String name, List<String> items, boolean shuffle)
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/playlist/PlaylistLoader.java:155:            this.shuffle = shuffle;
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/playlist/PlaylistLoader.java:158:        public void loadTracks(AudioPlayerManager manager, Consumer<AudioTrack> consumer, Runnable callback)
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/playlist/PlaylistLoader.java:173:                            if(shuffle)
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/playlist/PlaylistLoader.java:174:                                shuffleTracks();
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/playlist/PlaylistLoader.java:183:                        if(config.isTooLong(at))
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/playlist/PlaylistLoader.java:184:                            errors.add(new PlaylistLoadError(index, items.get(index), "This track is longer than the allowed maximum"));
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/playlist/PlaylistLoader.java:195:                    public void playlistLoaded(AudioPlaylist ap) 
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/playlist/PlaylistLoader.java:208:                            if(shuffle)
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/playlist/PlaylistLoader.java:216:                            loaded.removeIf(track -> config.isTooLong(track));
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/playlist/PlaylistLoader.java:227:                        errors.add(new PlaylistLoadError(index, items.get(index), "No matches found."));
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/playlist/PlaylistLoader.java:234:                        errors.add(new PlaylistLoadError(index, items.get(index), "Failed to load track: "+fe.getLocalizedMessage()));
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/playlist/PlaylistLoader.java:241:        public void shuffleTracks()
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/playlist/PlaylistLoader.java:243:            shuffle(tracks);
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/playlist/PlaylistLoader.java:261:        public List<PlaylistLoadError> getErrors()
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/playlist/PlaylistLoader.java:267:    public class PlaylistLoadError
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/playlist/PlaylistLoader.java:273:        private PlaylistLoadError(int number, String item, String reason)
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/audio/PlayerManager.java:21:import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/audio/PlayerManager.java:22:import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/audio/PlayerManager.java:39:public class PlayerManager extends DefaultAudioPlayerManager
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/audio/PlayerManager.java:53:        yt.setPlaylistPageCount(bot.getConfig().getMaxYTPlaylistPages());
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/audio/PlayerManager.java:75:    public boolean hasHandler(Guild guild)
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/audio/PlayerManager.java:77:        return guild.getAudioManager().getSendingHandler()!=null;
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/audio/PlayerManager.java:80:    public AudioHandler setUpHandler(Guild guild)
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/audio/PlayerManager.java:83:        if(guild.getAudioManager().getSendingHandler()==null)
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/audio/PlayerManager.java:85:            AudioPlayer player = createPlayer();
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/audio/PlayerManager.java:86:            player.setVolume(bot.getSettingsManager().getSettings(guild).getVolume());
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/audio/PlayerManager.java:87:            handler = new AudioHandler(this, guild, player);
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/audio/PlayerManager.java:89:            guild.getAudioManager().setSendingHandler(handler);
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/audio/PlayerManager.java:92:            handler = (AudioHandler) guild.getAudioManager().getSendingHandler();
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/DebugCmd.java:32:public class DebugCmd extends OwnerCommand 
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/DebugCmd.java:45:        this.guildOnly = false;
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/owner/DebugCmd.java:69:                .append("\n  Lavaplayer Version = ").append(PlayerLibrary.VERSION);
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/audio/NowplayingHandler.java:41:    private final HashMap<Long,Pair<Long,Long>> lastNP; // guild -> channel,message
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/audio/NowplayingHandler.java:60:    public void clearLastNPMessage(Guild guild)
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/audio/NowplayingHandler.java:62:        lastNP.remove(guild.getIdLong());
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/audio/NowplayingHandler.java:68:        for(long guildId: lastNP.keySet())
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/audio/NowplayingHandler.java:70:            Guild guild = bot.getJDA().getGuildById(guildId);
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/audio/NowplayingHandler.java:71:            if(guild==null)
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/audio/NowplayingHandler.java:73:                toRemove.add(guildId);
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/audio/NowplayingHandler.java:76:            Pair<Long,Long> pair = lastNP.get(guildId);
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/audio/NowplayingHandler.java:77:            TextChannel tc = guild.getTextChannelById(pair.getKey());
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/audio/NowplayingHandler.java:80:                toRemove.add(guildId);
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/audio/NowplayingHandler.java:83:            AudioHandler handler = (AudioHandler)guild.getAudioManager().getSendingHandler();
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/audio/NowplayingHandler.java:88:                toRemove.add(guildId);
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/audio/NowplayingHandler.java:92:                tc.editMessageById(pair.getValue(), msg).queue(m->{}, t -> lastNP.remove(guildId));
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/audio/NowplayingHandler.java:96:                toRemove.add(guildId);
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/audio/NowplayingHandler.java:115:    public void onMessageDelete(Guild guild, long messageId)
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/audio/NowplayingHandler.java:117:        Pair<Long,Long> pair = lastNP.get(guild.getIdLong());
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/audio/NowplayingHandler.java:121:            lastNP.remove(guild.getIdLong());
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/Listener.java:26:import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/Listener.java:27:import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/Listener.java:28:import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent;
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/Listener.java:53:            log.warn("This bot is not on any guilds! Use the following link to add the bot to your guilds!");
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/Listener.java:57:        event.getJDA().getGuilds().forEach((guild) -> 
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/Listener.java:61:                String defpl = bot.getSettingsManager().getSettings(guild).getDefaultPlaylist();
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/Listener.java:62:                VoiceChannel vc = bot.getSettingsManager().getSettings(guild).getVoiceChannel(guild);
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/Listener.java:63:                if(defpl!=null && vc!=null && bot.getPlayerManager().setUpHandler(guild).playFromDefault())
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/Listener.java:65:                    guild.getAudioManager().openAudioConnection(vc);
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/music/SkipCmd.java:29:public class SkipCmd extends MusicCommand 
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/music/SkipCmd.java:34:        this.name = "skip";
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/music/SkipCmd.java:35:        this.help = "votes to skip the current song";
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/music/SkipCmd.java:44:        AudioHandler handler = (AudioHandler)event.getGuild().getAudioManager().getSendingHandler();
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/music/SkipCmd.java:46:        double skipRatio = bot.getSettingsManager().getSettings(event.getGuild()).getSkipRatio();
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/music/SkipCmd.java:47:        if(skipRatio == -1) {
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/music/SkipCmd.java:48:          skipRatio = bot.getConfig().getSkipRatio();
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/music/SkipCmd.java:50:        if(event.getAuthor().getIdLong() == rm.getOwner() || skipRatio == 0)
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/music/SkipCmd.java:61:                msg = event.getClient().getWarning()+" You already voted to skip this song `[";
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/music/SkipCmd.java:64:                msg = event.getClient().getSuccess()+" You voted to skip the song `[";
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/music/SkipCmd.java:67:            int skippers = (int)event.getSelfMember().getVoiceState().getChannel().getMembers().stream()
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/music/SkipCmd.java:69:            int required = (int)Math.ceil(listeners * skipRatio);
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/music/SkipCmd.java:70:            msg += skippers + " votes, " + required + "/" + listeners + " needed]`";
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/music/SkipCmd.java:71:            if(skippers>=required)
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/gui/TextAreaOutputStream.java:120:            EventQueue.invokeLater(this); 
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/gui/TextAreaOutputStream.java:131:            EventQueue.invokeLater(this); 
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/queue/Queueable.java:22:public interface Queueable {
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/music/ShuffleCmd.java:27:public class ShuffleCmd extends MusicCommand 
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/music/ShuffleCmd.java:32:        this.name = "shuffle";
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/music/ShuffleCmd.java:33:        this.help = "shuffles songs you have added";
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/music/ShuffleCmd.java:42:        AudioHandler handler = (AudioHandler)event.getGuild().getAudioManager().getSendingHandler();
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/music/ShuffleCmd.java:43:        int s = handler.getQueue().shuffle(event.getAuthor().getIdLong());
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/music/ShuffleCmd.java:47:                event.replyError("You don't have any music in the queue to shuffle!");
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/commands/music/ShuffleCmd.java:53:                event.replySuccess("You successfully shuffled your "+s+" entries.");
+ref_repos/MusicBot-Java/src/main/java/com/jagrosh/jmusicbot/audio/AudioHandler.java:18:import com.jagrosh.jmusicbot.playlist.PlaylistLoader.Playlist;
+=== licenses ===
+--- ref_repos/Discord-MusicBot/LICENSE.md
+# License for Discord-MusicBot
+
+- The credits should not be changed.
+- The bot-code should be used for **private hosting** and **personal usage** only.
+- Using the code for public usage is **not allowed**.
+
+> **Note:** if you are found to be violating any of the above stated rule you might be asked to takedown your bot, happy
+> listening!! Incase of any doubts in the license contact owner.--- ref_repos/Music-bot-Node/LICENSE
+                    GNU GENERAL PUBLIC LICENSE
+                       Version 3, 29 June 2007
+
+ Copyright (C) 2007 Free Software Foundation, Inc. <https://fsf.org/>
+ Everyone is permitted to copy and distribute verbatim copies
+ of this license document, but changing it is not allowed.
+
+                            Preamble
+
+  The GNU General Public License is a free, copyleft license for
+software and other kinds of works.
+
+  The licenses for most software and other practical works are designed
+to take away your freedom to share and change the works.  By contrast,
+the GNU General Public License is intended to guarantee your freedom to
+share and change all versions of a program--to make sure it remains free
+software for all its users.  We, the Free Software Foundation, use the
+GNU General Public License for most of our software; it applies also to
+any other work released this way by its authors.  You can apply it to
+your programs, too.
+
+  When we speak of free software, we are referring to freedom, not
+price.  Our General Public Licenses are designed to make sure that you
+have the freedom to distribute copies of free software (and charge for
+them if you wish), that you receive source code or can get it if you
+want it, that you can change the software or use pieces of it in new
+free programs, and that you know you can do these things.
+
+  To protect your rights, we need to prevent others from denying you
+these rights or asking you to surrender the rights.  Therefore, you have
+--- ref_repos/MusicBot-Java/LICENSE
+                                 Apache License
+                           Version 2.0, January 2004
+                        http://www.apache.org/licenses/
+
+   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+
+   1. Definitions.
+
+      "License" shall mean the terms and conditions for use, reproduction,
+      and distribution as defined by Sections 1 through 9 of this document.
+
+      "Licensor" shall mean the copyright owner or entity authorized by
+      the copyright owner that is granting the License.
+
+      "Legal Entity" shall mean the union of the acting entity and all
+      other entities that control, are controlled by, or are under common
+      control with that entity. For the purposes of this definition,
+      "control" means (i) the power, direct or indirect, to cause the
+      direction or management of such entity, whether by contract or
+      otherwise, or (ii) ownership of fifty percent (50%) or more of the
+      outstanding shares, or (iii) beneficial ownership of such entity.
+
+      "You" (or "Your") shall mean an individual or Legal Entity
+      exercising permissions granted by this License.
+
+      "Source" form shall mean the preferred form for making modifications,
+      including but not limited to software source code, documentation
+      source, and configuration files.
+
+      "Object" form shall mean any form resulting from mechanical
+--- ref_repos/MusicBot-Python/LICENSE
+The MIT License
+
+Copyright (c) 2015-2024 Just-Some-Bots (https://github.com/Just-Some-Bots)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
