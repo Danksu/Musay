@@ -1,22 +1,12 @@
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct PermissionPolicy {
     pub admin_role_ids: HashSet<u64>,
     pub allowed_channel_ids: HashSet<u64>,
     pub blocked_user_ids: HashSet<u64>,
     pub blocked_track_ids: HashSet<String>,
-}
-impl Default for PermissionPolicy {
-    fn default() -> Self {
-        Self {
-            admin_role_ids: HashSet::new(),
-            allowed_channel_ids: HashSet::new(),
-            blocked_user_ids: HashSet::new(),
-            blocked_track_ids: HashSet::new(),
-        }
-    }
 }
 impl PermissionPolicy {
     pub fn can_use(&self, user_id: u64, channel_id: u64, roles: &[u64]) -> bool {

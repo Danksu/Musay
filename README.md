@@ -65,7 +65,7 @@ O projeto já implementa de forma real o núcleo dessa cadeia: `Track`, `TrackQu
 | Transcodificação | FFmpeg via Songbird/adapter | Suporte prático a Opus e múltiplos formatos; deve ser instalado no host |
 | Async/concurrency | Tokio | Runtime assíncrono, canais, sinais e tarefas controladas |
 | Persistência inicial | JSON atômico | Zero infraestrutura para a primeira versão; interface pode ser trocada por SQLite/SQLx |
-| Configuração | dotenvy, TOML e Serde | Configuração externa e tipos fortes |
+| Configuração | dotenvy e Serde | Configuração externa e tipos fortes |
 | Observabilidade | tracing/tracing-subscriber | Logs estruturados e filtros por ambiente |
 
 As versões foram verificadas no registro de crates em 14 de agosto de 2026. Serenity descreve a integração Discord e aponta Songbird para voz [5]; Songbird se define como biblioteca assíncrona de voice em Rust [6]. O projeto jagrosh documenta a amplitude de fontes e formatos do LavaPlayer [4], enquanto o MusicBot Python documenta o fluxo de download/processamento/reprodução e configuração por `options.ini` [3].
@@ -96,6 +96,10 @@ DATABASE_PATH=musay.json
 ```
 
 O bot precisa das permissões Discord correspondentes a ver canais, enviar mensagens, conectar e falar em canais de voz. A feature de transporte deve ser finalizada/ativada no ambiente de implantação com a configuração do gateway, intents mínimos e registro de comandos.
+
+## Auditoria e CI
+
+O relatório técnico com achados confirmados, prioridades, correções, riscos residuais e evidências está em [`AUDIT_REPORT.md`](AUDIT_REPORT.md), enquanto o inventário priorizado do baseline está em [`audit_findings.md`](audit_findings.md). O workflow [`CI`](.github/workflows/ci.yml) verifica formatação, compilação, testes e Clippy em cada push e pull request. A auditoria de advisories de dependências ainda depende da instalação de uma ferramenta específica, portanto não é declarada como concluída.
 
 ## Licenças e atribuição
 

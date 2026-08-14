@@ -303,10 +303,11 @@ impl AudioSource for BasicResolver {
                                 || ip.is_documentation()
                         }
                         std::net::IpAddr::V6(ip) => {
+                            let first = ip.segments()[0];
                             ip.is_loopback()
                                 || ip.is_unspecified()
-                                || ip.is_unique_local()
-                                || ip.is_unicast_link_local()
+                                || (first & 0xfe00) == 0xfc00
+                                || (first & 0xffc0) == 0xfe80
                         }
                     };
                     if private {

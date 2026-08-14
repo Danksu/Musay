@@ -1,12 +1,5 @@
-mod audio;
-mod config;
-mod discord;
-mod guild;
-mod permissions;
-mod persistence;
-
-use config::Config;
-use discord::{parse_command, CommandService};
+use musay::config::Config;
+use musay::discord::{parse_command, CommandService};
 use tracing::info;
 
 #[tokio::main]

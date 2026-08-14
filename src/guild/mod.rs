@@ -50,4 +50,7 @@ impl SessionRegistry {
     pub async fn len(&self) -> usize {
         self.sessions.read().await.len()
     }
+    pub async fn is_empty(&self) -> bool {
+        self.len().await == 0
+    }
 }
