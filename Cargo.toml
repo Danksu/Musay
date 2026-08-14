@@ -12,14 +12,12 @@ discord = ["dep:serenity", "dep:songbird"]
 
 [dependencies]
 async-trait = "0.1"
-chrono = { version = "0.4", features = ["serde", "clock"] }
 dotenvy = "0.15"
 rand = "0.8"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 thiserror = "1"
 tokio = { version = "1", features = ["macros", "rt-multi-thread", "signal", "sync", "time", "fs"] }
-toml = "0.8"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
 url = "2"

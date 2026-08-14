@@ -169,9 +169,32 @@ impl Player {
         Ok(start)
     }
     pub fn start_next(&mut self) -> Option<Track> {
+        if self.current.is_some() {
+            return self.current.clone();
+        }
+        self.current = self.queue.pop().ok();
+        self.position_secs = 0;
+        self.state = if self.current.is_some() {
+            PlayerState::Playing
+        } else {
+            PlayerState::Idle
+        };
+        if let Some(track) = self.current.clone() {
+            self.queue.record_history(track);
+        }
+        self.current.clone()
+    }
+    pub fn finish_current(&mut self) -> Option<Track> {
+        let previous = self.current.take();
         let next = match self.repeat {
-            RepeatMode::Track => self.current.clone().or_else(|| self.queue.pop().ok()),
-            _ => self.queue.pop().ok(),
+            RepeatMode::Track => previous.or_else(|| self.queue.pop().ok()),
+            RepeatMode::Queue => {
+                if let Some(track) = previous {
+                    let _ = self.queue.push(track);
+                }
+                self.queue.pop().ok()
+            }
+            RepeatMode::Off => self.queue.pop().ok(),
         };
         self.current = next.clone();
         self.position_secs = 0;
@@ -180,8 +203,8 @@ impl Player {
         } else {
             PlayerState::Idle
         };
-        if let Some(t) = next.clone() {
-            self.queue.record_history(t);
+        if let Some(track) = next.clone() {
+            self.queue.record_history(track);
         }
         next
     }
@@ -231,7 +254,6 @@ impl Player {
         self.repeat = mode;
     }
 }
-
 #[async_trait::async_trait]
 pub trait AudioSource: Send + Sync {
     async fn resolve(&self, input: &str, requested_by: u64) -> Result<Vec<Track>, SourceError>;
@@ -253,7 +275,49 @@ impl AudioSource for BasicResolver {
         if value.is_empty() {
             return Err(SourceError::Invalid("empty query".into()));
         }
-        let is_url = url::Url::parse(value).is_ok();
+        if value.len() > 2048 || value.chars().any(char::is_control) {
+            return Err(SourceError::Invalid("query exceeds input limits".into()));
+        }
+        let parsed = url::Url::parse(value).ok();
+        if let Some(ref url) = parsed {
+            let scheme = url.scheme();
+            if scheme != "http" && scheme != "https" {
+                return Err(SourceError::Invalid(
+                    "only HTTP(S) sources are accepted".into(),
+                ));
+            }
+            if url.username() != "" || url.password().is_some() {
+                return Err(SourceError::Invalid(
+                    "URL credentials are not accepted".into(),
+                ));
+            }
+            if let Some(host) = url.host_str() {
+                if let Ok(ip) = host.parse::<std::net::IpAddr>() {
+                    let private = match ip {
+                        std::net::IpAddr::V4(ip) => {
+                            ip.is_private()
+                                || ip.is_loopback()
+                                || ip.is_link_local()
+                                || ip.is_unspecified()
+                                || ip.is_broadcast()
+                                || ip.is_documentation()
+                        }
+                        std::net::IpAddr::V6(ip) => {
+                            ip.is_loopback()
+                                || ip.is_unspecified()
+                                || ip.is_unique_local()
+                                || ip.is_unicast_link_local()
+                        }
+                    };
+                    if private {
+                        return Err(SourceError::Invalid(
+                            "private or local network destinations are not accepted".into(),
+                        ));
+                    }
+                }
+            }
+        }
+        let is_url = parsed.is_some();
         let resolved_url = if is_url {
             value.to_owned()
         } else {
@@ -298,6 +362,23 @@ mod tests {
         assert!(p.pause());
         assert!(p.resume());
         p.set_repeat(RepeatMode::Track);
-        assert_eq!(p.repeat, RepeatMode::Track);
+        assert_eq!(p.finish_current().unwrap().title, "a");
+        p.set_repeat(RepeatMode::Queue);
+        p.enqueue(t("b")).unwrap();
+        assert_eq!(p.finish_current().unwrap().title, "b");
+        assert_eq!(p.finish_current().unwrap().title, "a");
+        assert_eq!(p.queue.len(), 1);
+    }
+
+    #[tokio::test]
+    async fn resolver_rejects_dangerous_inputs() {
+        let resolver = BasicResolver;
+        assert!(resolver.resolve("file:///etc/passwd", 1).await.is_err());
+        assert!(resolver.resolve("http://127.0.0.1/admin", 1).await.is_err());
+        assert!(resolver.resolve(&"x".repeat(2049), 1).await.is_err());
+        assert!(resolver
+            .resolve("https://example.com/audio", 1)
+            .await
+            .is_ok());
     }
 }

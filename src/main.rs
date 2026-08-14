@@ -16,7 +16,13 @@ async fn main() {
         .with_env_filter("musay=info")
         .init();
     if std::env::args().any(|a| a == "--self-check") {
-        println!("Musay core OK");
+        match Config::for_self_check() {
+            Ok(_) => println!("Musay core OK"),
+            Err(error) => {
+                eprintln!("self-check falhou: {error}");
+                std::process::exit(2);
+            }
+        }
         return;
     }
     let config = match Config::from_env() {
@@ -25,7 +31,7 @@ async fn main() {
             eprintln!(
                 "Configuração inválida: {e}. Use --self-check para validar o núcleo sem token."
             );
-            return;
+            std::process::exit(2);
         }
     };
     let service = CommandService::new(config);
