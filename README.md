@@ -76,7 +76,7 @@ O parser aceita prefixo configurável e os comandos `play`, `pause`, `resume`, `
 
 ## Compilação e manual de execução
 
-Instale Rust estável atual, FFmpeg, `yt-dlp` e, para voz, bibliotecas Opus do sistema. O `yt-dlp` precisa estar no `PATH`, pois o Songbird o executa como processo externo para resolver buscas e URLs.
+Instale Rust estável atual, `yt-dlp`, Deno e, para voz, bibliotecas Opus do sistema. FFmpeg é recomendado para formatos que exigem transcodificação. O pacote distribuído já inclui `yt-dlp` e Deno; o runtime procura ambos ao lado do executável ou no `PATH`. A versão atual do yt-dlp exige um runtime JavaScript externo para resolver os desafios do YouTube.
 
 Execute:
 
@@ -105,7 +105,7 @@ No [Discord Developer Portal](https://discord.com/developers/applications), habi
 | Comando | Função |
 |---|---|
 | `!join` / `!leave` | Entra no canal de voz do usuário ou sai dele |
-| `!play <busca ou URL>` | Resolve com yt-dlp, entra no canal de voz do usuário e começa a reprodução |
+| `!play <busca ou URL>` | Resolve com yt-dlp + Deno, valida a fonte antes de confirmar e começa a reprodução |
 | `!pause` / `!resume` | Pausa ou retoma a faixa ativa |
 | `!stop` | Para a faixa atual e limpa o estado de reprodução |
 | `!skip` | Para a faixa atual e inicia a próxima da fila, quando existir |
@@ -124,7 +124,7 @@ O fluxo de distribuição é local e plug and play: o usuário recebe o executá
 
 ## Auditoria e CI
 
-O relatório técnico com achados confirmados, prioridades, correções, riscos residuais e evidências está em [`AUDIT_REPORT.md`](AUDIT_REPORT.md), enquanto o inventário priorizado do baseline está em [`audit_findings.md`](audit_findings.md). O workflow [`CI`](.github/workflows/ci.yml) verifica formatação, compilação, testes e Clippy em cada push e pull request. A auditoria de advisories de dependências ainda depende da instalação de uma ferramenta específica, portanto não é declarada como concluída.
+O relatório técnico com achados confirmados, prioridades, correções, riscos residuais e evidências está em [`AUDIT_REPORT.md`](AUDIT_REPORT.md), enquanto o inventário priorizado do baseline está em [`audit_findings.md`](audit_findings.md). A pesquisa específica da falha de áudio está em [`reproduction_research.md`](reproduction_research.md). O workflow [`CI`](.github/workflows/ci.yml) verifica formatação, compilação, testes e Clippy em cada push e pull request. O `cargo-audit` foi executado e encontrou advisories transitivos documentados no relatório.
 
 ## Licenças e atribuição
 
@@ -132,9 +132,9 @@ Os repositórios analisados permanecem apenas como referências externas. O cód
 
 ## Limitações conhecidas
 
-A versão atual já conecta o gateway Serenity, registra o Songbird, solicita o token no terminal, entra em canais de voz e usa `YoutubeDl` para resolver buscas/URLs. O evento de término avança automaticamente a fila e respeita os modos de repeat do player; um novo `!play` substitui a faixa ativa e mantém a próxima fila interna. Ainda faltam dashboard web, letras sincronizadas, Spotify OAuth, métricas Prometheus e comandos slash.
+A versão atual já conecta o gateway Serenity, registra o Songbird, solicita o token no terminal, entra em canais de voz e usa `YoutubeDl` para resolver buscas/URLs. O runtime agora exige Deno para o yt-dlp atual, valida a faixa com `make_playable_async` antes de confirmar a reprodução e registra `TrackEvent::Error` para falhas posteriores. O evento de término avança automaticamente a fila e respeita os modos de repeat do player. Ainda faltam dashboard web, letras sincronizadas, Spotify OAuth, métricas Prometheus e comandos slash.
 
-Essas limitações são intencionais e explícitas: o caminho principal de conexão e reprodução está implementado e compilado, mas o ambiente precisa ter `yt-dlp`, FFmpeg e as permissões/intents corretos. O próximo incremento deve adicionar testes de integração com um fake de voice e melhorar a troca de versões do stack Songbird/Serenity para reduzir advisories transitivos.
+Essas limitações são intencionais e explícitas: o caminho de conexão e reprodução está implementado e compilado, mas a extração depende da disponibilidade da plataforma externa, de rede e, em alguns casos, de cookies ou desafios anti-bot. O runtime agora apresenta o erro de preparação em vez de responder como se estivesse tocando. O próximo incremento deve adicionar testes de integração com um fake de voice e melhorar a troca de versões do stack Songbird/Serenity para reduzir advisories transitivos.
 
 ## Melhorias futuras
 

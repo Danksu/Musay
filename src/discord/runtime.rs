@@ -103,6 +103,22 @@ impl BotRuntime {
             return Err("yt-dlp foi encontrado, mas não conseguiu executar --version".to_owned());
         }
         info!(version = %String::from_utf8_lossy(&output.stdout).trim(), "yt-dlp disponível");
+        let deno_output = tokio::time::timeout(
+            Duration::from_secs(10),
+            ProcessCommand::new(if cfg!(windows) { "deno.exe" } else { "deno" })
+                .arg("--version")
+                .output(),
+        )
+        .await
+        .map_err(|_| "Deno demorou demais para responder".to_owned())?
+        .map_err(|_| {
+            "Deno não foi encontrado. Coloque deno/deno.exe ao lado do executável ou no PATH"
+                .to_owned()
+        })?;
+        if !deno_output.status.success() {
+            return Err("Deno foi encontrado, mas não conseguiu executar --version".to_owned());
+        }
+        info!(version = %String::from_utf8_lossy(&deno_output.stdout).lines().next().unwrap_or("desconhecida"), "Deno disponível");
         if ProcessCommand::new(if cfg!(windows) {
             "ffmpeg.exe"
         } else {
@@ -144,6 +160,8 @@ impl BotRuntime {
             "--fragment-retries",
             "2",
             "--no-playlist",
+            "--js-runtimes",
+            "deno",
         ]
         .into_iter()
         .map(str::to_owned)
@@ -167,16 +185,24 @@ impl BotRuntime {
         guild_id: GuildId,
         handle: &TrackHandle,
     ) -> Result<(), String> {
+        let track_id = handle.uuid().to_string();
         handle
             .add_event(
                 Event::Track(TrackEvent::End),
                 EndHandler {
                     runtime: self.clone(),
                     guild_id,
-                    track_id: handle.uuid().to_string(),
+                    track_id: track_id.clone(),
                 },
             )
-            .map_err(|error| format!("não foi possível registrar evento de término: {error}"))
+            .map_err(|error| format!("não foi possível registrar evento de término: {error}"))?;
+        handle
+            .add_event(
+                Event::Track(TrackEvent::Error),
+                TrackErrorHandler { guild_id, track_id },
+            )
+            .map_err(|error| format!("não foi possível registrar evento de erro: {error}"))
+            .map(|_| ())
     }
 
     async fn start_track(
@@ -195,8 +221,23 @@ impl BotRuntime {
             .ok_or_else(|| "chamada de voz não encontrada".to_owned())?;
         let handle = call.lock().await.play_input(self.source_for_track(track));
         self.attach_end_handler(guild_id, &handle).await?;
-        if let Some(previous) = self.active_tracks.lock().await.insert(guild_id, handle) {
+        if let Some(previous) = self
+            .active_tracks
+            .lock()
+            .await
+            .insert(guild_id, handle.clone())
+        {
             let _ = previous.stop();
+        }
+        if let Err(error) = handle.make_playable_async().await {
+            self.stop_active(guild_id).await;
+            let session = self
+                .service
+                .sessions
+                .get_or_create(guild_id.get(), &self.service.config)
+                .await;
+            session.lock().await.player.stop();
+            return Err(format!("falha ao preparar o áudio: {error}"));
         }
         Ok(())
     }
@@ -515,5 +556,31 @@ impl SongbirdEventHandler for EndHandler {
             }
         });
         Some(Event::Cancel)
+    }
+}
+
+struct TrackErrorHandler {
+    guild_id: GuildId,
+    track_id: String,
+}
+
+#[async_trait]
+impl SongbirdEventHandler for TrackErrorHandler {
+    async fn act(&self, ctx: &EventContext<'_>) -> Option<Event> {
+        let is_current_track = matches!(
+            ctx,
+            EventContext::Track(tracks)
+                if tracks.iter().any(|(_, handle)| handle.uuid().to_string() == self.track_id)
+        );
+        if is_current_track {
+            tracing::error!(
+                guild_id = ?self.guild_id,
+                track_id = %self.track_id,
+                "Songbird reportou erro ao preparar ou decodificar a faixa"
+            );
+            Some(Event::Cancel)
+        } else {
+            None
+        }
     }
 }

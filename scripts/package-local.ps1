@@ -11,12 +11,14 @@ Copy-Item "$Root\.env.example" "$Target\.env.example" -Force
 
 $YtDlp = Get-Command yt-dlp.exe -ErrorAction SilentlyContinue
 if ($YtDlp) { Copy-Item $YtDlp.Source "$Target\yt-dlp.exe" -Force }
+$Deno = Get-Command deno.exe -ErrorAction SilentlyContinue
+if ($Deno) { Copy-Item $Deno.Source "$Target\deno.exe" -Force }
 $Ffmpeg = Get-Command ffmpeg.exe -ErrorAction SilentlyContinue
 if ($Ffmpeg) { Copy-Item $Ffmpeg.Source "$Target\ffmpeg.exe" -Force }
 
 @"
 1. Configure o bot no Discord Developer Portal e habilite Message Content Intent.
-2. Coloque yt-dlp.exe e, se necessário, ffmpeg.exe nesta mesma pasta ou no PATH.
+2. Coloque yt-dlp.exe e deno.exe nesta mesma pasta ou no PATH; FFmpeg é recomendado.
 3. Execute musay.exe.
 4. Digite o token quando solicitado; a entrada é oculta e não é salva.
 5. Pressione Ctrl+C para encerrar.

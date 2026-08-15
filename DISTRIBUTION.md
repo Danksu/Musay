@@ -14,12 +14,13 @@ O token não deve ser colocado no pacote, no `.env`, em scripts ou em repositór
 |---|---:|---|
 | `musay` ou `musay.exe` | Sim | Executável do bot |
 | `yt-dlp` ou `yt-dlp.exe` | Sim para `!play` | Busca e resolução de fontes |
+| `deno` ou `deno.exe` | Sim para YouTube atual | Runtime JavaScript usado pelo yt-dlp/EJS |
 | `ffmpeg` ou `ffmpeg.exe` | Recomendado | Compatibilidade com formatos que exigem transcodificação |
 | `README.md` | Recomendado | Manual geral |
 | `.env.example` | Opcional | Ajustes operacionais sem token |
 | `COMO-EXECUTAR.txt` | Recomendado | Instruções rápidas |
 
-O runtime procura `yt-dlp` e `ffmpeg` primeiro no diretório do executável e também aceita ferramentas disponíveis no `PATH`. A ausência de `yt-dlp` impede a inicialização normal com uma mensagem clara. A ausência de FFmpeg gera um aviso e pode limitar alguns formatos.
+O runtime procura `yt-dlp`, `deno` e `ffmpeg` primeiro no diretório do executável e também aceita ferramentas disponíveis no `PATH`. A ausência de `yt-dlp` ou Deno impede a inicialização normal com uma mensagem clara. A ausência de FFmpeg gera um aviso e pode limitar alguns formatos.
 
 ## Empacotamento
 
