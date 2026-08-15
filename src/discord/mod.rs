@@ -12,6 +12,8 @@ use thiserror::Error;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Command {
     Play(String),
+    Join,
+    Leave,
     Pause,
     Resume,
     Stop,
@@ -50,6 +52,8 @@ pub fn parse_command(input: &str, prefix: &str) -> Result<Command, CommandError>
         "play" | "p" => Ok(Command::Play(
             arg.ok_or(CommandError::MissingArgument)?.into(),
         )),
+        "join" => Ok(Command::Join),
+        "leave" | "disconnect" => Ok(Command::Leave),
         "pause" => Ok(Command::Pause),
         "resume" | "unpause" => Ok(Command::Resume),
         "stop" => Ok(Command::Stop),
@@ -95,7 +99,12 @@ impl CommandService {
             resolver: Arc::new(BasicResolver),
         }
     }
-    pub async fn play(&self, guild_id: u64, user_id: u64, query: &str) -> Result<String, String> {
+    pub async fn enqueue(
+        &self,
+        guild_id: u64,
+        user_id: u64,
+        query: &str,
+    ) -> Result<Vec<crate::audio::Track>, String> {
         let tracks = self
             .resolver
             .resolve(query, user_id)
@@ -103,13 +112,17 @@ impl CommandService {
             .map_err(|e| e.to_string())?;
         let session = self.sessions.get_or_create(guild_id, &self.config).await;
         let mut session = session.lock().await;
-        let count = tracks.len();
-        for t in tracks {
-            session.enqueue(t).map_err(|e| e.to_string())?;
+        for track in &tracks {
+            session.enqueue(track.clone()).map_err(|e| e.to_string())?;
         }
         if session.player.current.is_none() {
             let _ = session.player.start_next();
         }
+        Ok(tracks)
+    }
+
+    pub async fn play(&self, guild_id: u64, user_id: u64, query: &str) -> Result<String, String> {
+        let count = self.enqueue(guild_id, user_id, query).await?.len();
         Ok(format!("{} faixa(s) adicionada(s)", count))
     }
 }
@@ -119,11 +132,25 @@ mod tests {
     #[test]
     fn parses_commands() {
         assert_eq!(parse_command("!volume 40", "!"), Ok(Command::Volume(40)));
+        assert_eq!(parse_command("!join", "!"), Ok(Command::Join));
+        assert_eq!(parse_command("!leave", "!"), Ok(Command::Leave));
         assert_eq!(
             parse_command("!repeat queue", "!"),
             Ok(Command::Repeat(RepeatMode::Queue))
         );
         assert!(parse_command(&("!play ".to_owned() + &"x".repeat(2048)), "!").is_err());
+    }
+
+    #[tokio::test]
+    async fn enqueue_keeps_next_track_for_automatic_advance() {
+        let service = CommandService::new(Config::for_self_check().unwrap());
+        service.enqueue(7, 1, "first").await.unwrap();
+        service.enqueue(7, 2, "second").await.unwrap();
+        let session = service.sessions.get_or_create(7, &service.config).await;
+        let mut session = session.lock().await;
+        assert_eq!(session.player.current.as_ref().unwrap().title, "first");
+        assert_eq!(session.player.queue.items().next().unwrap().title, "second");
+        assert_eq!(session.player.finish_current().unwrap().title, "second");
     }
 
     #[tokio::test]

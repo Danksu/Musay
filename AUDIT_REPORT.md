@@ -9,12 +9,12 @@ A auditoria foi conduzida sobre o repositório Rust atual do Musay, seguindo os 
 | Área | Evidência | Status |
 |---|---|---|
 | Compilação | `cargo check --all-targets` executado após o primeiro conjunto de correções | Confirmado |
-| Testes | 7 testes comportamentais passaram no conjunto corrigido | Confirmado |
-| Formatação | `cargo fmt --all` executado | Confirmado |
+| Testes | 8 testes comportamentais passaram no conjunto corrigido | Confirmado |
+| Formatação | `cargo fmt --all -- --check` executado | Confirmado |
 | Clippy | `cargo clippy --all-targets -- -D warnings` executado sem erros | Confirmado |
-| Advisories | `cargo-audit` não instalado no ambiente | Não verificado |
+| Advisories | `cargo audit` v0.22.2 executado; 10 vulnerabilidades transitivas e 4 avisos de manutenção encontrados | Falha upstream documentada; não mascarada |
 | Credenciais versionadas | Nenhuma encontrada na inspeção do repositório | Confirmado para o snapshot auditado |
-| Runtime Discord | `cargo check` e `cargo test --all-targets` executados após a integração Serenity/Songbird | Confirmado em compilação; conexão real depende de token, intents e ambiente externo |
+| Runtime Discord | `cargo check`, `cargo test --all-targets` e `cargo build --release` executados após a integração Serenity/Songbird | Confirmado em compilação; conexão real depende de token, intents e ambiente externo |
 
 ## Correções aplicadas no primeiro conjunto
 
@@ -34,4 +34,19 @@ O fluxo final de operação é local: o executável pede o token interativamente
 
 ## Próximas ações prioritárias
 
-A próxima grande entrega deve conectar o evento de término do Songbird ao avanço automático da fila, adicionar timeouts/cancelamento/backoff limitado, sandbox de FFmpeg e observabilidade de falhas. Depois disso, devem ser adicionados testes de integração com fakes de voice, teste de restart/persistência e uma etapa de advisory scan no pipeline.
+A próxima grande entrega deve adicionar testes de integração com fakes de voice, reconexão com backoff limitado, sandbox de FFmpeg e observabilidade de falhas. Depois disso, devem ser adicionados testes de restart/persistência, comandos slash e uma estratégia upstream para reduzir os advisories transitivos do stack Songbird/OpenMLS.
+
+## Auditoria de advisories atualizada
+
+O `cargo-audit` v0.22.2 foi instalado e executado contra o lockfile atual. O resultado encontrou **10 vulnerabilidades transitivas** e **4 avisos de manutenção**. A maioria entra pelo stack opcional de voz do Songbird 0.6.0, especialmente `davey`, `openmls_rust_crypto`, `hpke-rs`, `libcrux-*`, `derivative` e `instant`. O lockfile também contém `rustls-webpki` 0.102.8 em uma cadeia antiga, enquanto outra cadeia já usa 0.103.14.
+
+Esses advisories não foram ocultados nem marcados como resolvidos artificialmente. A correção estrutural exige atualizar o Songbird/Serenity ou substituir componentes transitivos do stack de voz; forçar versões incompatíveis com `cargo update --precise` poderia quebrar a compatibilidade e gerar uma falsa sensação de segurança. A release deve carregar essa limitação no relatório até que a cadeia upstream seja atualizada e o `cargo audit` passe.
+
+| Categoria | Evidência | Ação nesta entrega |
+|---|---|---|
+| `libcrux-secrets`, `libcrux-sha3`, `libcrux-aesgcm` | Introduzidos por `davey -> openmls_rust_crypto -> hpke-rs` dentro do Songbird | Registrados como risco transitivo; não usar `--ignore` para mascarar |
+| `rustls-webpki` 0.102.8 | Cadeia antiga de TLS em dependência transitiva | Manter a versão exigida pelo upstream até atualização compatível |
+| `derivative`, `instant`, `proc-macro-error2` | Dependências transitivas não mantidas | Monitorar atualização do Songbird/Serenity |
+| Ferramenta de advisories | `cargo audit` executado localmente | CI deve executar o mesmo comando e falhar em novas vulnerabilidades não revisadas |
+
+A auditoria de advisories é, portanto, **concluída com falhas upstream documentadas**, não aprovada. O binário não deve ser anunciado como livre de vulnerabilidades enquanto essa cadeia permanecer no lockfile.

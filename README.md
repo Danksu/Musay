@@ -104,9 +104,11 @@ No [Discord Developer Portal](https://discord.com/developers/applications), habi
 
 | Comando | Função |
 |---|---|
+| `!join` / `!leave` | Entra no canal de voz do usuário ou sai dele |
 | `!play <busca ou URL>` | Resolve com yt-dlp, entra no canal de voz do usuário e começa a reprodução |
 | `!pause` / `!resume` | Pausa ou retoma a faixa ativa |
-| `!stop` / `!skip` | Para a faixa atual; outra pode ser iniciada com `!play` |
+| `!stop` | Para a faixa atual e limpa o estado de reprodução |
+| `!skip` | Para a faixa atual e inicia a próxima da fila, quando existir |
 | `!queue` / `!nowplaying` | Exibe a fila interna ou a faixa atual |
 | `!shuffle` | Embaralha a fila interna |
 | `!volume <0-100>` / `!mute` | Ajusta ou silencia a faixa ativa |
@@ -130,13 +132,13 @@ Os repositórios analisados permanecem apenas como referências externas. O cód
 
 ## Limitações conhecidas
 
-A versão atual já conecta o gateway Serenity, registra o Songbird, solicita o token no terminal, entra em canais de voz e usa `YoutubeDl` para resolver buscas/URLs. A fila interna e os estados do player estão separados do transporte; a reprodução real substitui a faixa ativa quando um novo `!play` é executado. Ainda faltam avanço automático da fila no evento de término, dashboard web, letras sincronizadas, Spotify OAuth, métricas Prometheus e comandos slash.
+A versão atual já conecta o gateway Serenity, registra o Songbird, solicita o token no terminal, entra em canais de voz e usa `YoutubeDl` para resolver buscas/URLs. O evento de término avança automaticamente a fila e respeita os modos de repeat do player; um novo `!play` substitui a faixa ativa e mantém a próxima fila interna. Ainda faltam dashboard web, letras sincronizadas, Spotify OAuth, métricas Prometheus e comandos slash.
 
-Essas limitações são intencionais e explícitas: o caminho principal de conexão e reprodução está implementado e compilado, mas o ambiente precisa ter `yt-dlp`, FFmpeg e as permissões/intents corretos. O próximo incremento deve conectar o evento de término ao avanço automático de `TrackQueue`, sem alterar `Player`, `TrackQueue` ou a API `AudioSource`.
+Essas limitações são intencionais e explícitas: o caminho principal de conexão e reprodução está implementado e compilado, mas o ambiente precisa ter `yt-dlp`, FFmpeg e as permissões/intents corretos. O próximo incremento deve adicionar testes de integração com um fake de voice e melhorar a troca de versões do stack Songbird/Serenity para reduzir advisories transitivos.
 
 ## Melhorias futuras
 
-A próxima etapa recomendada é conectar o evento de término do Songbird ao avanço automático da fila, adicionar uma cadeia de resolvers com timeouts e cancelamento, persistência SQLite via SQLx, comandos slash registrados por guild, embeds e botões, reconexão com backoff, métricas e testes de integração com fakes de voice. A arquitetura atual foi desenhada para essas extensões sem reescrever o player.
+A próxima etapa recomendada é adicionar testes de integração com fakes de voice, persistência SQLite via SQLx, comandos slash registrados por guild, embeds e botões, reconexão com backoff, métricas e uma cadeia de resolvers com cancelamento mais fino. A arquitetura atual foi desenhada para essas extensões sem reescrever o player.
 
 ## Referências
 
